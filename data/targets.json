@@ -26,7 +26,7 @@
       "coordStatus": "approximate",
       "summary": "Gale Crater is about 154 km across. Mount Sharp, about 5 km tall, rises from its centre.",
       "why": "Orientation landmark.",
-      "limits": "Centre position is approximate.",
+      "limits": "Centre position is approximate. The 154 km width is not confirmed by a source ARES has checked.",
       "sources": ["hughes2022", "jpl-boxwork"]
     },
     {
@@ -75,7 +75,7 @@
   "sources": {
     "jpl-boxwork": {
       "title": "NASA JPL: Curiosity Rover Sees Martian 'Spiderwebs' Up Close (23 Feb 2026)",
-      "url": "https://www.jpl.nasa.gov/news/nasas-curiosity-rover-sees-martian-spiderwebs-up-close/"
+      "url": "https://www.nasa.gov/missions/mars-science-laboratory/curiosity-rover/nasas-curiosity-rover-sees-martian-spiderwebs-up-close/"
     },
     "pia26697": {
       "title": "NASA Photojournal PIA26697: Curiosity Studies Nodules on Boxwork Formations. Credit NASA/JPL-Caltech/MSSS",
