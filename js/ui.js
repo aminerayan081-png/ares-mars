@@ -95,17 +95,20 @@ function panelEnv(){
 
 function panelRte(){
   const t=routeTotals();
+  const warn=(ENV&&ENV.radiation&&!ENV.radiation.verified)?" "+WARN:"";
   return`<h3>EVA Route Planner</h3>
   <p class="m">Start: Bradbury Landing. Add science stops from the target details panel, or add a free waypoint anywhere on the map. A free waypoint is ${bd("blue")} user-placed, and you can drag its blue marker to move it.</p>
   <button class="pri" onclick="placeWaypoint()">➕ Add waypoint on map</button>
-  <ol>${S.route.map((id,i)=>`<li>${isWp(id)?`<input value="${esc(stopName(id))}" maxlength="60" onchange="renameStop(${i},this.value)">`:esc(stopName(id))} <span class="m">${fc(P(id))}</span> <button onclick="moveStop(${i},-1)">↑</button><button onclick="moveStop(${i},1)">↓</button><button onclick="removeStop(${i})">✕</button></li>`).join("")||"<li class='m'>empty</li>"}</ol>
+  <ol>${S.route.map((id,i)=>`<li>${isWp(id)?`<input value="${esc(stopName(id))}" maxlength="60" onchange="renameStop(${i},this.value)">`:esc(stopName(id))} <span class="m">${fc(P(id))}</span><br><span class="m">Time at stop:</span> <input type="number" min="0" style="width:4.5em" value="${stopMin(id)}" onchange="setDur(${i},this.value)"> <span class="m">min</span> <button onclick="moveStop(${i},-1)">↑</button><button onclick="moveStop(${i},1)">↓</button><button onclick="removeStop(${i})">✕</button></li>`).join("")||"<li class='m'>empty</li>"}</ol>
   ${legTbl()}
   <h3>Totals</h3>
   <p>${bd("yellow")} Straight-line distance: <b>${t.km.toFixed(2)} km</b><br><span class="m">Method: haversine on a sphere, R = ${MARS_R_KM} km. Not a traversable path.</span></p>
-  <p>${bd("blue")} Assumptions — walking speed <input type="number" step=".1" value="${S.speed}" onchange="setSpeed(this.value)"> km/h, <input type="number" value="${S.stop}" onchange="setStop(this.value)"> min per science stop</p>
-  <p>${bd("blue")} Est. EVA time: <b>${t.totH.toFixed(1)} h</b> (walk ${t.walkH.toFixed(1)} + stops ${t.stopH.toFixed(1)})<br>${bd("yellow")} Est. radiation dose: <b>${t.doseUGy.toFixed(1)} µGy</b> (historical average rate; see Environment tab)</p>
+  <p>${bd("blue")} Assumptions: walking speed <input type="number" step=".1" value="${S.speed}" onchange="setSpeed(this.value)"> km/h, default <input type="number" value="${S.stop}" onchange="setStop(this.value)"> min per science stop (free waypoints default to 0)</p>
+  <p>${bd("blue")} Est. EVA time: <b>${t.totH.toFixed(1)} h</b> (walk ${t.walkH.toFixed(1)} + stops ${t.stopH.toFixed(1)})<br>${bd("yellow")}${warn} Est. radiation dose: <b>${t.doseUGy.toFixed(1)} µGy</b><br><span class="m">Uses the historical average rate from the Environment tab. It ignores solar events and shielding.</span></p>
+  <p class="m">Routes here are not assessed for safety or traversability.</p>
   <button onclick="clearRoute()">Clear route</button>`;
 }
+
 function panelLog(){
   return`<h3>Astronaut Field Log</h3>
   <p class="m">Notes are about: <b>${esc(T_[S.sel].name)}</b></p>
