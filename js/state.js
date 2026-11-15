@@ -2,7 +2,7 @@
 /* ARES state: one object (S) that is saved in the browser (localStorage). */
 const STORE_KEY="ares";
 const TABS=[["nav","1 Surface Navigation"],["sci","2 Science Targets"],["ter","3 Terrain Intel"],["env","4 Environment"],["rte","5 EVA Planner"],["log","6 Field Log"]];
-const S={tab:"nav",sel:"home",route:[],vis:[],log:[],smp:[],pos:{},elev:{},speed:1.5,stop:30,placing:null};
+const S={tab:"nav",sel:"home",route:[],vis:[],log:[],smp:[],pos:{},elev:{},speed:1.5,stop:30,placing:null,sheet:"closed"};
 
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -28,5 +28,6 @@ function cleanState(ids){
   if(!(S.stop>=0))S.stop=30;
   if(!ok(S.sel))S.sel="home";
   if(!TABS.some(t=>t[0]===S.tab))S.tab="nav";
+  if(!["closed","half","full"].includes(S.sheet))S.sheet="closed";
 }
 function save(){try{localStorage.setItem(STORE_KEY,JSON.stringify(S))}catch(e){}}
