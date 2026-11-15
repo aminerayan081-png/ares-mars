@@ -93,6 +93,19 @@ function panelEnv(){
   <div class="item static">${bd("blue")} <b>Not available yet</b><br>${esc(ENV.pending)}</div>`;
 }
 
+function planBlock(){
+  const warn=(ENV&&ENV.radiation&&!ENV.radiation.verified)?" "+WARN:"";
+  const cur=Object.assign(routeTotals(),{stops:S.route.length,miss:legs().filter(l=>l.miss).length});
+  const row=(n,t)=>`<tr><td>${n}</td><td>${t.stops}</td><td>${t.km.toFixed(2)}${t.miss?"*":""}</td><td>${t.totH.toFixed(1)}</td><td>${t.doseUGy.toFixed(1)}</td></tr>`;
+  return`<h3>Saved plans</h3>
+  <p class="m">Save the current route as a plan, build another, then compare. Loading a plan replaces the current route.</p>
+  <input id="pn" placeholder="Plan name" maxlength="40"> <button class="pri" onclick="savePlan()">Save current as new plan</button>
+  ${S.plans.map(p=>`<div class="item static"><b>${esc(p.name)}</b> ${S.activePlan===p.id?'<span class="m">(last loaded or saved)</span>':""}<br><button onclick="loadPlan('${p.id}')">Load</button> <button onclick="updatePlan('${p.id}')">Overwrite with current</button> <button onclick="deletePlan('${p.id}')">Delete</button></div>`).join("")||'<p class="m">No saved plans yet.</p>'}
+  ${S.plans.length?`<h3>Compare plans</h3>
+  <table><tr><th>Plan</th><th>Stops</th><th>km</th><th>EVA h</th><th>µGy</th></tr>${row("<i>Current</i>",cur)}${S.plans.map(p=>row(esc(p.name),planTotals(p))).join("")}</table>
+  <p class="m">${bd("yellow")} km is straight-line distance, not a path. ${bd("blue")} EVA hours use each plan's own speed and stop times. ${bd("yellow")}${warn} µGy uses the historical average rate. * means a stop is not placed yet, so its legs are left out. This is a planning comparison, not a safety assessment.</p>`:""}`;
+}
+
 function panelRte(){
   const t=routeTotals();
   const warn=(ENV&&ENV.radiation&&!ENV.radiation.verified)?" "+WARN:"";
