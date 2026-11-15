@@ -44,7 +44,8 @@ function initMap(){
   mk=L.layerGroup().addTo(map);
   rl=L.polyline([],{color:"#ff9d1c",weight:3,dashArray:"8 6"}).addTo(map);
   map.on("mousemove",e=>{$("#co").textContent=fc([e.latlng.lat,e.latlng.lng])});
-  map.on("click",e=>{
+    map.on("click",e=>{
+    if(addingWp){addingWp=false;$("#map").classList.remove("pl");addWaypoint([e.latlng.lat,e.latlng.lng]);return}
     if(!S.placing)return;
     S.pos[S.placing]=[+e.latlng.lat.toFixed(4),+e.latlng.lng.toFixed(4)];
     S.sel=S.placing;S.placing=null;$("#map").classList.remove("pl");
