@@ -76,11 +76,11 @@ function panelTer(){
   return`<h3>Terrain Intelligence</h3>
   <p><b>${esc(t.name)}</b></p>
   <p>Elevation: ${e!=null?e.toFixed(0)+" m "+(user?bd("blue")+" user-entered":bd("green")):"not set"}</p>
-  <p class="m">Type an elevation you read from a cited source (for example Mars Trek). ARES does not read heights from the map yet.</p>
+  <p class="m">Type an elevation you read from a cited source (for example Mars Trek). For heights read from the saved MOLA terrain data, use the ⛰ Elevation button on the map.</p>
   <input id="ei" type="number" placeholder="metres" value="${S.elev[S.sel]!=null?S.elev[S.sel]:""}"> <button onclick="setElev()">Set</button>
   <h3>Route legs</h3>${legTbl()||'<p class="m">Add stops in the EVA Planner.</p>'}
   <h3>Limits &amp; cautions</h3><p>${esc(t.limits||"—")}</p>
-  <p class="m">A leg's gradient is the height difference between its two end points divided by the straight-line distance, so it hides steep local features. Straight lines are not planned paths. The 10° and 20° bands are our own ${bd("blue")} assumptions, not NASA limits, and a low gradient does not mean a route is safe. Real elevation data (a Terrain Pack) comes in a later phase.</p>`;
+  <p class="m">A leg's gradient is the height difference between its two end points divided by the straight-line distance, so it hides steep local features. Straight lines are not planned paths. The 10° and 20° bands are our own ${bd("blue")} assumptions, not NASA limits, and a low gradient does not mean a route is safe. The saved MOLA 463 m terrain data is used by the map tools; see ℹ Terrain data on the map for its source and limits.</p>`;
 }
 
 function panelEnv(){
