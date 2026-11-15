@@ -70,3 +70,52 @@ function setDur(i,v){
 function setSpeed(v){const n=parseFloat(v);S.speed=n>0?n:1.5;save();render()}
 function setStop(v){const n=parseFloat(v);S.stop=Number.isFinite(n)&&n>=0?n:30;save();render()}
 function setElev(){const v=parseFloat($("#ei").value);if(Number.isNaN(v))delete S.elev[S.sel];else S.elev[S.sel]=v;save();render()}
+/* ---- Saved plans (Stage 4.5) ---- */
+function snap(){
+  const wp={},pos={},elev={},dur={};
+  S.route.forEach(id=>{
+    if(isWp(id)){wp[id]={name:S.wp[id].name};pos[id]=S.pos[id].slice();if(S.elev[id]!=null)elev[id]=S.elev[id]}
+    if(S.dur[id]!=null)dur[id]=S.dur[id];
+  });
+  return{route:S.route.slice(),wp,pos,elev,dur,speed:S.speed,stop:S.stop};
+}
+function savePlan(){
+  if(S.plans.length>=10){notify("You can keep up to 10 plans. Delete one first.",6000);return}
+  const el=$("#pn"),name=((el&&el.value)||"").trim().slice(0,40)||"Plan "+S.nextPlan;
+  const id="plan-"+S.nextPlan++;
+  S.plans.push(Object.assign({id,name},snap()));
+  S.activePlan=id;save();render();
+}
+function updatePlan(id){
+  const p=S.plans.find(x=>x.id===id);if(!p)return;
+  if(!confirm("Overwrite \""+p.name+"\" with the current route?"))return;
+  Object.assign(p,snap());S.activePlan=id;save();render();
+}
+function deletePlan(id){
+  const p=S.plans.find(x=>x.id===id);if(!p)return;
+  if(!confirm("Delete \""+p.name+"\"?"))return;
+  S.plans=S.plans.filter(x=>x.id!==id);
+  if(S.activePlan===id)S.activePlan=null;
+  save();render();
+}
+function loadPlan(id){
+  const p=S.plans.find(x=>x.id===id);if(!p)return;
+  if(!confirm("Load \""+p.name+"\"? This replaces the current route. Save it first if you want to keep it."))return;
+  S.route.filter(isWp).forEach(dropWp);
+  S.route=p.route.slice();
+  S.wp=JSON.parse(JSON.stringify(p.wp));
+  Object.assign(S.pos,JSON.parse(JSON.stringify(p.pos)));
+  Object.assign(S.elev,p.elev||{});
+  S.dur=Object.assign({},p.dur);
+  S.speed=p.speed;S.stop=p.stop;S.activePlan=id;
+  save();render();
+}
+/* Totals for a saved plan, computed without changing the current route. */
+function planTotals(p){
+  const b={route:S.route,wp:S.wp,pos:S.pos,elev:S.elev,dur:S.dur,speed:S.speed,stop:S.stop};
+  try{
+    S.route=p.route;S.wp=Object.assign({},S.wp,p.wp);S.pos=Object.assign({},S.pos,p.pos);
+    S.elev=Object.assign({},S.elev,p.elev||{});S.dur=p.dur;S.speed=p.speed;S.stop=p.stop;
+    return Object.assign(routeTotals(),{stops:p.route.length,miss:legs().filter(l=>l.miss).length});
+  }finally{Object.assign(S,b)}
+}
