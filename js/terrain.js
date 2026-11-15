@@ -3,6 +3,7 @@
    (data/terrain/gale-mola463.bin + .json). Needs Leaflet, map.js, data.js (loadJSON) and ui.js (bd, fc). */
 const TER={on:false,loaded:false,loading:false,meta:null,data:null,btn:null,box:null};
 const TER_NODATA=-32768;
+const TER_TIMEOUT_MS=20000;   // give up on the terrain file after 20 seconds
 
 function terCss(){
   if(document.getElementById("ter-css"))return;
@@ -22,21 +23,32 @@ function initTerrain(){
   map.addControl(new Ctl());
   map.on("click",terClick);
 }
-async function terLoad(){
-  if(TER.loading)return false;TER.loading=true;
+async function terLoad1(){
+  TER.loading=true;
   try{
     const m=await loadJSON("data/terrain/gale-mola463.json"),b=m&&m.bounds;
     if(!b||![m.width,m.height].every(n=>Number.isInteger(n)&&n>10&&n<5000)||![b.west,b.east,b.north,b.south].every(Number.isFinite)||b.east<=b.west||b.north<=b.south)throw new Error("the terrain description file is invalid");
-    const r=await fetch("data/terrain/gale-mola463.bin",{cache:"no-cache"});
-    if(!r.ok)throw new Error("terrain file not found (HTTP "+r.status+")");
-    const buf=await r.arrayBuffer();
+    const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),TER_TIMEOUT_MS);let buf;
+    try{
+      const r=await fetch("data/terrain/gale-mola463.bin",{cache:"no-cache",signal:ac.signal});
+      if(!r.ok)throw new Error("terrain file not found (HTTP "+r.status+")");
+      buf=await r.arrayBuffer();
+    }catch(err){throw err&&err.name==="AbortError"?new Error("the terrain file took too long to load"):err}
+    finally{clearTimeout(tm)}
     if(buf.byteLength!==m.width*m.height*2)throw new Error("the terrain file has the wrong size");
     const dv=new DataView(buf),d=new Int16Array(m.width*m.height);
     for(let i=0;i<d.length;i++)d[i]=dv.getInt16(i*2,true);
     TER.meta=m;TER.data=d;TER.loaded=true;
     TER.box=L.rectangle([[b.south,b.west],[b.north,b.east]],{color:"#9aa0b4",weight:1,dashArray:"4 4",fill:false,interactive:false}).addTo(map);
     TER.loading=false;return true;
-  }catch(e){TER.loading=false;notify("Elevation data could not be loaded: "+e.message,10000);return false}
+  }catch(e){TER.loading=false;if(typeof notify==="function")notify("Elevation data could not be loaded: "+e.message,10000);return false}
+}
+/* One shared load: every tool that needs the data waits for the same request instead of starting its own. */
+let TER_P=null;
+function terLoad(){
+  if(TER.loaded)return Promise.resolve(true);
+  if(!TER_P)TER_P=terLoad1().finally(()=>{TER_P=null});
+  return TER_P;
 }
 async function terToggle(){
   if(TER.on){terSet(false);return}

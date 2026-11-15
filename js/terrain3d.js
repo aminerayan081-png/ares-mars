@@ -209,12 +209,12 @@ async function tdOpen(){
     tdShell();TD.el.style.display="flex";TD.open=true;tdUI();
     if(!TD.ready){
       tdMsg("Loading the 3D library (needs an internet connection)…");
-      if(!TD.THREE)TD.THREE=await import(TD_URL);
+      if(!TD.THREE)TD.THREE=await Promise.race([import(TD_URL),new Promise((_,rej)=>setTimeout(()=>rej(new Error("the 3D library took too long to load")),20000))]);
       tdMsg("Building the terrain…");
       tdScene();
     }
     tdMsg("");tdRoute();tdResize();tdRender();
-  }catch(e){tdMsg("The 3D view could not start: "+(e&&e.message?e.message:e)+". The map and all other tools still work.")}
+  }catch(e){tdMsg("The 3D view could not start: "+(e&&e.message?e.message:e)+". If you were offline, reconnect and reload the page. The map and all other tools still work.")}
   finally{TD.busy=false}
 }
 function tdClose(){TD.open=false;if(TD.el)TD.el.style.display="none"}
