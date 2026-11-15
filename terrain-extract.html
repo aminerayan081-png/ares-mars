@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ARES terrain extractor</title>
+<style>
+:root{color-scheme:dark}
+body{margin:0;padding:12px 14px 70px;background:#10121a;color:#e8e8ee;font:15px/1.45 system-ui,sans-serif}
+h1{font-size:19px;margin:0 0 4px}.m{color:#9aa0b4;font-size:13px}
+.card{background:#1a1d29;border:1px solid #2c3042;border-radius:10px;padding:10px 12px;margin:10px 0;overflow-wrap:anywhere}
+button{font:inherit;min-height:44px;padding:10px 14px;border-radius:8px;border:1px solid #ff9d1c;background:#2a2316;color:#ffd9a0;margin:4px 4px 4px 0}
+button:disabled{opacity:.5}
+.b{display:inline-block;min-width:64px;text-align:center;font-weight:700;font-size:12px;padding:2px 8px;border-radius:99px;margin-right:6px}
+.PASS{background:#14532d;color:#86efac}.FAIL{background:#7f1d1d;color:#fca5a5}
+canvas{width:100%;height:auto;border-radius:8px;background:#000;display:block;margin-top:8px;image-rendering:pixelated}
+</style>
+</head>
+<body>
+<h1>ARES terrain extractor <span class="m">(separate page)</span></h1>
+<p class="m">Reads a small Gale Crater window (about 1 to 2 MB) from the MOLA 463 m elevation file and lets you save it as two small files for ARES. It changes nothing in ARES. Its decoding was checked here on a made-up file with the same layout; the real server run is yours.</p>
+<button id="go">Extract Gale terrain</button>
+<div id="log" class="m"></div>
+<div id="out"></div>
+<canvas id="cv" hidden></canvas>
+<div id="dl" hidden><p>Save both files, then upload them to your repo in the folder <b>data/terrain</b>.</p><button id="d1">Save gale-mola463.bin</button><button id="d2">Save gale-mola463.json</button></div>
+<script src="terrain-logic1.js"></script>
+<script src="terrain-extract.js"></script>
+<script>
+if(typeof extractWindow!=="function")document.getElementById("log").textContent="A file is missing or cut off. terrain-logic1.js and terrain-extract.js must be in the same folder as this page.";
+</script>
+</body>
+</html>
