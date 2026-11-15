@@ -38,7 +38,7 @@ function gradeLabel(s){
 function routeTotals(){
   const ok=legs().filter(l=>!l.miss);
   const km=ok.reduce((s,l)=>s+l.d,0)/1000;
-  const walkH=km/S.speed,stopH=S.route.length*S.stop/60,totH=walkH+stopH;
+  const walkH=km/S.speed,stopH=S.route.filter(id=>!isWp(id)).length*S.stop/60,totH=walkH+stopH;
   const rate=ENV&&ENV.radiation?ENV.radiation.value:0;           // mGy per day (see environment.json)
   return{km,walkH,stopH,totH,doseUGy:rate*totH/SOLH*1000};
 }
