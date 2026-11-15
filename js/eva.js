@@ -70,6 +70,15 @@ function setDur(i,v){
 function setSpeed(v){const n=parseFloat(v);S.speed=n>0?n:1.5;save();render()}
 function setStop(v){const n=parseFloat(v);S.stop=Number.isFinite(n)&&n>=0?n:30;save();render()}
 function setElev(){const v=parseFloat($("#ei").value);if(Number.isNaN(v))delete S.elev[S.sel];else S.elev[S.sel]=v;save();render()}
+
+/* ---- Objective (Stage 4.6) ---- */
+function setObjective(v){S.obj=objOk(v)?v:null;save();render()}
+function addObjToRoute(){
+  if(!objOk(S.obj))return;
+  if(!S.route.includes(S.obj))S.route.push(S.obj);
+  save();render();
+}
+
 /* ---- Saved plans (Stage 4.5) ---- */
 function snap(){
   const wp={},pos={},elev={},dur={};
@@ -77,7 +86,7 @@ function snap(){
     if(isWp(id)){wp[id]={name:S.wp[id].name};pos[id]=S.pos[id].slice();if(S.elev[id]!=null)elev[id]=S.elev[id]}
     if(S.dur[id]!=null)dur[id]=S.dur[id];
   });
-  return{route:S.route.slice(),wp,pos,elev,dur,speed:S.speed,stop:S.stop};
+  return{route:S.route.slice(),wp,pos,elev,dur,speed:S.speed,stop:S.stop,obj:S.obj};
 }
 function savePlan(){
   if(S.plans.length>=10){notify("You can keep up to 10 plans. Delete one first.",6000);return}
@@ -107,7 +116,7 @@ function loadPlan(id){
   Object.assign(S.pos,JSON.parse(JSON.stringify(p.pos)));
   Object.assign(S.elev,p.elev||{});
   S.dur=Object.assign({},p.dur);
-  S.speed=p.speed;S.stop=p.stop;S.activePlan=id;
+  S.speed=p.speed;S.stop=p.stop;S.obj=objOk(p.obj)?p.obj:null;S.activePlan=id;
   save();render();
 }
 /* Totals for a saved plan, computed without changing the current route. */
@@ -118,4 +127,4 @@ function planTotals(p){
     S.elev=Object.assign({},S.elev,p.elev||{});S.dur=p.dur;S.speed=p.speed;S.stop=p.stop;
     return Object.assign(routeTotals(),{stops:p.route.length,miss:legs().filter(l=>l.miss).length});
   }finally{Object.assign(S,b)}
-}
+                                                                     }
