@@ -1,0 +1,25 @@
+{
+  "note": "Environmental data for ARES. verified=false means the numbers were carried over from the prototype and have not yet been re-checked against the paper.",
+  "radiation": {
+    "label": "Galactic cosmic ray absorbed dose rate at Gale (MSL/RAD, about 300 sols, 2012–2013)",
+    "value": 0.21,
+    "uncertainty": 0.04,
+    "unit": "mGy/day",
+    "range_text": "180–225 µGy/day",
+    "measuredInside": "Measured by the RAD instrument on the Curiosity rover, not by a suit-worn dosimeter.",
+    "verified": false,
+    "verifyNote": "The paper exists and reports both absorbed dose and dose equivalent, but these figures have not yet been re-checked against it. Dose equivalent (mSv) is the quantity used for astronaut limits and still needs to be added.",
+    "sources": ["hassler2014", "hassler2014-ntrs"]
+  },
+  "pending": "Atmospheric pressure and temperature: no sourced values are shown yet. They will be added from published Curiosity data with dates and units. No live Mars weather and no real-time telemetry are used.",
+  "sources": {
+    "hassler2014": {
+      "title": "Hassler et al. 2014, Science 343(6169):1244797 (DOI 10.1126/science.1244797)",
+      "url": "https://doi.org/10.1126/science.1244797"
+    },
+    "hassler2014-ntrs": {
+      "title": "NASA NTRS record 20180007641 for the same paper",
+      "url": "https://ntrs.nasa.gov/citations/20180007641"
+    }
+  }
+}
