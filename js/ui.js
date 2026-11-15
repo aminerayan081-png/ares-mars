@@ -93,17 +93,40 @@ function panelEnv(){
   <div class="item static">${bd("blue")} <b>Not available yet</b><br>${esc(ENV.pending)}</div>`;
 }
 
+function objBlock(){
+  const opts=T.filter(t=>t.type==="science"&&P(t.id));
+  let h="<h3>Objective</h3>";
+  if(!opts.length)return h+'<p class="m">No science target is placed on the map yet. Open the Science tab, tap a target, press "Place on map", then come back and choose it here.</p>';
+  h+=`<p class="m">${bd("blue")} The objective is the science target this plan is meant to reach. Only targets you placed on the map can be chosen.</p>
+  <select onchange="setObjective(this.value)"><option value="">none</option>${opts.map(t=>`<option value="${t.id}"${S.obj===t.id?" selected":""}>${esc(t.name)}</option>`).join("")}</select>`;
+  if(S.obj){
+    const i=S.route.indexOf(S.obj);
+    if(i>=0){
+      h+=`<p>✔ The objective is stop ${i+1} of this route.</p>`;
+    }else{
+      const last=S.route.length?S.route[S.route.length-1]:"home",pl=P(last),po=P(S.obj);
+      const km=(pl&&po)?hav(pl,po)/1000:null;
+      h+=`<p>⚠ The objective is not a stop in this route yet.</p>`;
+      if(km!=null)h+=`<p>${bd("yellow")} Straight-line distance from the last stop (${esc(stopName(last))}) to the objective: <b>${km.toFixed(2)} km</b><br><span class="m">Not a traversable path.</span></p>`;
+      h+=`<button onclick="addObjToRoute()">➕ Add objective as last stop</button>`;
+    }
+    h+='<p class="m">Having the objective as a stop only means the route includes it. It says nothing about whether the route is safe or traversable.</p>';
+  }
+  return h;
+}
+
 function planBlock(){
   const warn=(ENV&&ENV.radiation&&!ENV.radiation.verified)?" "+WARN:"";
   const cur=Object.assign(routeTotals(),{stops:S.route.length,miss:legs().filter(l=>l.miss).length});
-  const row=(n,t)=>`<tr><td>${n}</td><td>${t.stops}</td><td>${t.km.toFixed(2)}${t.miss?"*":""}</td><td>${t.totH.toFixed(1)}</td><td>${t.doseUGy.toFixed(1)}</td></tr>`;
+  const oc=(o,r)=>!o?"–":(r.includes(o)?"yes":"no");
+  const row=(n,t,o,r)=>`<tr><td>${n}</td><td>${t.stops}</td><td>${t.km.toFixed(2)}${t.miss?"*":""}</td><td>${t.totH.toFixed(1)}</td><td>${t.doseUGy.toFixed(1)}</td><td>${oc(o,r)}</td></tr>`;
   return`<h3>Saved plans</h3>
   <p class="m">Save the current route as a plan, build another, then compare. Loading a plan replaces the current route.</p>
   <input id="pn" placeholder="Plan name" maxlength="40"> <button class="pri" onclick="savePlan()">Save current as new plan</button>
-  ${S.plans.map(p=>`<div class="item static"><b>${esc(p.name)}</b> ${S.activePlan===p.id?'<span class="m">(last loaded or saved)</span>':""}<br><button onclick="loadPlan('${p.id}')">Load</button> <button onclick="updatePlan('${p.id}')">Overwrite with current</button> <button onclick="deletePlan('${p.id}')">Delete</button></div>`).join("")||'<p class="m">No saved plans yet.</p>'}
+  ${S.plans.map(p=>`<div class="item static"><b>${esc(p.name)}</b>${p.obj?` <span class="m">· objective: ${esc(stopName(p.obj))}</span>`:""} ${S.activePlan===p.id?'<span class="m">(last loaded or saved)</span>':""}<br><button onclick="loadPlan('${p.id}')">Load</button> <button onclick="updatePlan('${p.id}')">Overwrite with current</button> <button onclick="deletePlan('${p.id}')">Delete</button></div>`).join("")||'<p class="m">No saved plans yet.</p>'}
   ${S.plans.length?`<h3>Compare plans</h3>
-  <table><tr><th>Plan</th><th>Stops</th><th>km</th><th>EVA h</th><th>µGy</th></tr>${row("<i>Current</i>",cur)}${S.plans.map(p=>row(esc(p.name),planTotals(p))).join("")}</table>
-  <p class="m">${bd("yellow")} km is straight-line distance, not a path. ${bd("blue")} EVA hours use each plan's own speed and stop times. ${bd("yellow")}${warn} µGy uses the historical average rate. * means a stop is not placed yet, so its legs are left out. This is a planning comparison, not a safety assessment.</p>`:""}`;
+  <table><tr><th>Plan</th><th>Stops</th><th>km</th><th>EVA h</th><th>µGy</th><th>Objective reached</th></tr>${row("<i>Current</i>",cur,S.obj,S.route)}${S.plans.map(p=>row(esc(p.name),planTotals(p),p.obj,p.route)).join("")}</table>
+  <p class="m">${bd("yellow")} km is straight-line distance, not a path. ${bd("blue")} EVA hours use each plan's own speed and stop times. ${bd("yellow")}${warn} µGy uses the historical average rate. * means a stop is not placed yet, so its legs are left out. "Objective reached" means the objective is a stop in that plan ("–" means no objective chosen). This is a planning comparison, not a safety assessment.</p>`:""}`;
 }
 
 function panelRte(){
@@ -114,6 +137,7 @@ function panelRte(){
   <button class="pri" onclick="placeWaypoint()">➕ Add waypoint on map</button>
   <ol>${S.route.map((id,i)=>`<li>${isWp(id)?`<input value="${esc(stopName(id))}" maxlength="60" onchange="renameStop(${i},this.value)">`:esc(stopName(id))} <span class="m">${fc(P(id))}</span><br><span class="m">Time at stop:</span> <input type="number" min="0" style="width:4.5em" value="${stopMin(id)}" onchange="setDur(${i},this.value)"> <span class="m">min</span> <button onclick="moveStop(${i},-1)">↑</button><button onclick="moveStop(${i},1)">↓</button><button onclick="removeStop(${i})">✕</button></li>`).join("")||"<li class='m'>empty</li>"}</ol>
   ${legTbl()}
+  ${objBlock()}
   <h3>Totals</h3>
   <p>${bd("yellow")} Straight-line distance: <b>${t.km.toFixed(2)} km</b><br><span class="m">Method: haversine on a sphere, R = ${MARS_R_KM} km. Not a traversable path.</span></p>
   <p>${bd("blue")} Assumptions: walking speed <input type="number" step=".1" value="${S.speed}" onchange="setSpeed(this.value)"> km/h, default <input type="number" value="${S.stop}" onchange="setStop(this.value)"> min per science stop (free waypoints default to 0)</p>
