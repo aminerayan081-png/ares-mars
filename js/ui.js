@@ -138,8 +138,8 @@ function setStopElev(i,v){
 
 function profileBlock(){
   const q=seq(),L_=legs();
-  const note='<p class="m">Terrain limits: the line joins stops with straight segments, so it does not show the real ground between them (rocks, ridges, sand). The height scale is stretched to fit the values, so slopes look steeper than they are. ARES has no elevation dataset yet (a later phase), and this profile does not show whether a route is safe or traversable.</p>';
-  let h=`<h3>Elevation profile</h3><p class="m">${bd("blue")} Elevations are values you type from a cited source (for example Mars Trek). ARES does not read heights from the map. Bradbury Landing's elevation is ${bd("green")} published.</p>`;
+  const note='<p class="m">Terrain limits: the line joins stops with straight segments, so it does not show the real ground between them (rocks, ridges, sand). The height scale is stretched to fit the values, so slopes look steeper than they are. This profile uses only the heights you typed, and it does not show whether a route is safe or traversable.</p>';
+  let h=`<h3>Elevation profile</h3><p class="m">${bd("blue")} Elevations are values you type from a cited source (for example Mars Trek). The MOLA terrain profile further down reads heights from the saved terrain data instead. Bradbury Landing's elevation is ${bd("green")} published.</p>`;
   h+=`<table><tr><th>Stop</th><th>Elevation</th></tr>`+q.map((id,i)=>{
     const e=E(id);
     const inp=i>0?` <input type="number" style="width:5.5em" placeholder="m" value="${S.elev[id]!=null?S.elev[id]:""}" onchange="setStopElev(${i-1},this.value)">`:"";
