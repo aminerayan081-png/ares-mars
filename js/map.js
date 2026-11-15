@@ -65,6 +65,12 @@ function drawMap(){
     mk.addLayer(m);
   });
   S.smp.forEach(s=>mk.addLayer(L.marker(s.ll,{icon:L.divIcon({className:"",iconSize:[14,14],html:'<div class="pin s"></div>'})}).bindTooltip("Hypothetical sample: "+esc(s.note))));
+    S.route.filter(isWp).forEach(id=>{
+    const p=P(id);if(!p)return;
+    const m=L.marker(p,{draggable:true,icon:L.divIcon({className:"",iconSize:[16,16],html:'<div class="pin" style="background:#4fc3f7;border-color:#fff"></div>'})}).bindTooltip(esc(stopName(id)));
+    m.on("dragend",e=>{const l=e.target.getLatLng();S.pos[id]=[+l.lat.toFixed(4),+l.lng.toFixed(4)];save();render()});
+    mk.addLayer(m);
+  });
   rl.setLatLngs(seq().map(P).filter(Boolean));
 }
 function placeTarget(){
