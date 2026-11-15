@@ -42,7 +42,7 @@ function renderNav(){
 if(typeof window!=="undefined"&&window.addEventListener)window.addEventListener("resize",()=>{if(typeof map!=="undefined"&&map)map.invalidateSize();renderNav()});
 
 function renderSide(){
-  const f={nav:panelNav,sci:panelSci,ter:panelTer,env:panelEnv,rte:panelRte,log:panelLog}[S.tab]||panelNav;
+    const f={nav:panelNav,sci:(typeof panelScience==="function"?panelScience:panelSci),ter:panelTer,env:panelEnv,rte:panelRte,log:panelLog}[S.tab]||panelNav;
   $("#sc").innerHTML=f();
 }
 
