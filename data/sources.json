@@ -53,6 +53,19 @@
       "relatedTargets": ["nodule"],
       "relatedImages": ["pia26697"]
     },
+        "pia26693": {
+      "title": "PIA26693: Curiosity Surveys the Boxwork Region",
+      "publisher": "NASA Photojournal",
+      "type": "photojournal",
+      "url": "https://science.nasa.gov/photojournal/curiosity-surveys-the-boxwork-region/",
+      "published": "2026-02-23",
+      "verified": true,
+      "checkedOn": "2026-11-15",
+      "supports": "Mastcam panorama taken 26 Sept 2025 (sol 4671) of boxwork formations, low ridges with hollows between them. The caption says the ridges are hardened mineral deposits left after wind removed softer rock.",
+      "limits": "Publication date taken from the JPL image page; the Photojournal addition date was not visible when checked. Gives no coordinates.",
+      "relatedTargets": ["ridge", "hollow"],
+      "relatedImages": ["pia26693"]
+    },
     "hughes2022": {
       "title": "Hughes et al. 2022, JGR Planets: Canyon wall and floor debris deposits in Aeolis Mons",
       "publisher": "Journal of Geophysical Research: Planets",
