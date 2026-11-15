@@ -2,8 +2,10 @@
 /* Positions, distances and the EVA route. Everything here is a calculation (🟡) or a user assumption (🔵). */
 const MARS_R_KM=3389.5;   // Mars mean radius (IAU)
 const SOLH=24.66;         // hours in one sol
-const P=id=>S.pos[id]||T_[id].ll;
-const E=id=>S.elev[id]!=null?S.elev[id]:T_[id].elev;
+const P=id=>S.pos[id]||(T_[id]?T_[id].ll:null);
+const E=id=>S.elev[id]!=null?S.elev[id]:(T_[id]?T_[id].elev:null);
+const isWp=id=>/^wp-\d+$/.test(id);
+const stopName=id=>T_[id]?T_[id].name:(S.wp[id]?S.wp[id].name:id);
 const rad=x=>x*Math.PI/180;
 const fc=ll=>ll?`${Math.abs(ll[0]).toFixed(3)}°${ll[0]<0?"S":"N"}, ${ll[1].toFixed(3)}°E`:"not placed";
 
