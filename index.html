@@ -42,7 +42,7 @@ const SRC={
  trek:["NASA Mars Trek","https://trek.nasa.gov/mars/"],pds:["PDS (PLACES waypoints, MSL data)","https://pds.nasa.gov/"],
  raw:["MSL raw images","https://mars.nasa.gov/msl/multimedia/raw-images/"]};
 const T=[
-{id:"home",name:"Bradbury Landing (reference base)",type:"base",cls:"green",ll:[-4.49,137.42],elev:-4500.971,
+{id:"home",name:"Bradbury Landing (reference base)",type:"base",cls:"green",ll:[-4.5895,137.4417],elev:-4501,
  info:"Curiosity landing site, used here as the start/reference point of the simulated EVA route.",why:"Known, published location and elevation — an anchor for distance and elevation-change calculations.",haz:"None assessed.",s:["rems"]},
 {id:"contact",name:"Layered Sulfate → Boxwork contact",type:"sci",cls:"green",ll:null,elev:null,
  info:"Curiosity crossed from the Layered Sulfate unit into the mapped boxwork interval on sol 4534 (7 May 2025), at the eastern edge of the mapped boxwork.",why:"A geological boundary: the best place to compare 'normal' sulfate layers with boxwork bedrock.",haz:"🔵 Unassessed — check slope once placed.",s:["gsa","pia"]},
@@ -77,10 +77,10 @@ function legs(){const q=seq(),o=[];for(let i=1;i<q.length;i++){const a=q[i-1],b=
 const diff=s=>s==null?["unknown","blue"]:s<10?["easy (<10°)","green"]:s<20?["moderate (10–20°)","yellow"]:["hard (>20°)","blue"];
 // ===== MAP =====
 const map=L.map("map",{crs:L.CRS.EPSG4326,center:[-5.1,137.6],zoom:7,minZoom:1,maxZoom:10});
-const base={};for(const k in LAYERS){const[p,x]=LAYERS[k];base[k]=L.tileLayer(`https://trek.nasa.gov/tiles/Mars/EQ/${p}/1.0.0/default/default028mm/{z}/{y}/{x}.${x}`,{zoomOffset:-1,minZoom:1,maxNativeZoom:8,maxZoom:10,attribution:"NASA/JPL Mars Trek"})}
+const base={};for(const k in LAYERS){const[p,x]=LAYERS[k];base[k]=L.tileLayer(`https://trek.nasa.gov/tiles/Mars/EQ/${p}/1.0.0/default/default028mm/{z}/{y}/{x}.${x}`,minZoom:1,maxNativeZoom:8,maxZoom:10,attribution:"NASA/JPL Mars Trek"})}
 for(const k in LAYERS)delete base[k];
 base["USGS Viking MDIM 2.1 (WMS)"]=L.tileLayer.wms("https://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/mars/mars_simp_cyl.map",{layers:"MDIM21",format:"image/jpeg",version:"1.1.1",attribution:"USGS Astrogeology · NASA Viking"});
-let te=0;for(const k in base)base[k].on("tileerror",e=>{te++;if(te===4)alert("Map tiles failed to load. Failing address:\n"+e.tile.src)}); Object.values(base)[0].addTo(map);L.control.layers(base,null,{collapsed:true}).addTo(map);
+let te=0;for(const k in base)base[k].on("tileerror",e=>{te++;if(te===4)alert("Map tiles failed to load. Failing address:\n"+e.tile.src)}); base["USGS Viking MDIM 2.1 (WMS)"].addTo(map);L.control.layers(base,null,{collapsed:true}).addTo(map);
 L.control.scale({imperial:false}).addTo(map);
 const grat=L.layerGroup().addTo(map);for(let la=-10;la<=0;la++)grat.addLayer(L.polyline([[la,130],[la,145]],{color:"#ff9d1c",weight:.4,opacity:.35,interactive:false}));for(let lo=130;lo<=145;lo++)grat.addLayer(L.polyline([[-10,lo],[0,lo]],{color:"#ff9d1c",weight:.4,opacity:.35,interactive:false}));
 const mk=L.layerGroup().addTo(map);let rl=L.polyline([],{color:"#ff9d1c",weight:3,dashArray:"8 6"}).addTo(map);
