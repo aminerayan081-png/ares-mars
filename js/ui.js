@@ -185,6 +185,7 @@ function panelRte(){
   <p>${bd("blue")} Est. EVA time: <b>${t.totH.toFixed(1)} h</b> (walk ${t.walkH.toFixed(1)} + stops ${t.stopH.toFixed(1)})<br>${bd("yellow")}${warn} Est. radiation dose: <b>${t.doseUGy.toFixed(1)} µGy</b><br><span class="m">Uses the historical average rate from the Environment tab. It ignores solar events and shielding.</span></p>
   <p class="m">Routes here are not assessed for safety or traversability.</p>
   <button onclick="clearRoute()">Clear route</button>
+    ${typeof terProfileBlock==="function"?terProfileBlock():""}
   ${planBlock()}`;
 }
 
