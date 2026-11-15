@@ -1,0 +1,21 @@
+{
+  "note": "ARES comparison pairs. The 'shows' and 'notSupported' texts are ARES's own explanations, not NASA statements. Sol and day differences are calculated by the app from the image records.",
+  "comparisons": [
+    {
+      "id": "cmp-mesa-vs-boxwork",
+      "title": "Distant butte vs boxwork region",
+      "leftId": "pia26552",
+      "rightId": "pia26693",
+      "shows": "Left: a Mastcam view in which NASA says dark ridges and a cliff band on the distant butte Gould Mesa may be the first glimpses of boxwork. Right: a later Mastcam panorama of boxwork ridges and hollows. Together they show boxwork-related terrain first from far away and then from within the region.",
+      "notSupported": "This is not a before-and-after of one place. The sources do not say the two images show the same location, and NASA describes the butte identification as only possible. The images were taken on different dates."
+    },
+    {
+      "id": "cmp-panorama-vs-nodules",
+      "title": "Boxwork panorama vs nodule close-up",
+      "leftId": "pia26693",
+      "rightId": "pia26697",
+      "shows": "Left: a wide Mastcam panorama of ridges and hollows. Right: a MAHLI close-up mosaic of pea-sized nodules found along ridge walls and in hollows. The comparison shows how the same kind of terrain looks at very different scales.",
+      "notSupported": "The sources do not say the close-up was taken inside the area shown in the panorama. The two images come from different instruments, scales and dates, so one is not a zoomed-in version of the other."
+    }
+  ]
+}
