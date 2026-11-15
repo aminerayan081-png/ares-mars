@@ -74,7 +74,12 @@ function drawMap(){
   rl.setLatLngs(seq().map(P).filter(Boolean));
 }
 function placeTarget(){
-  S.placing=S.sel;$("#map").classList.add("pl");
-  if(isMobile()){S.sheet="closed";save();applySheet()}   // close the panel so the whole map can be tapped
+  addingWp=false;S.placing=S.sel;$("#map").classList.add("pl");
+  if(isMobile()){S.sheet="closed";save();applySheet()}
   notify("Tap the map to place: "+T_[S.sel].name,9000);
+}
+function placeWaypoint(){
+  S.placing=null;addingWp=true;$("#map").classList.add("pl");
+  if(isMobile()){S.sheet="closed";save();applySheet()}
+  notify("Tap the map to add a waypoint",9000);
 }
