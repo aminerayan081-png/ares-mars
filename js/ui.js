@@ -8,10 +8,38 @@ const src=ids=>(ids||[]).filter(k=>SRC[k]).map(k=>{
   return s.url?`<a href="${s.url}" target="_blank" rel="noopener">${esc(s.title)}</a>`:`${esc(s.title)} <span class="m">(link to add)</span>`;
 }).join("<br>");
 
-function render(){renderNav();renderSide();renderDetail();drawMap();renderStatus()}
-function setTab(t){S.tab=t;save();render()}
+const NAVSHORT={nav:["🧭","Navigate"],sci:["🔬","Science"],ter:["⛰️","Terrain"],env:["☢️","Environment"],rte:["🥾","EVA"],log:["📝","Log"]};
+const isMobile=()=>typeof window!=="undefined"&&!!window.matchMedia&&window.matchMedia("(max-width:800px)").matches;
+
+function render(){renderNav();renderSide();renderDetail();drawMap();renderStatus();applySheet()}
+/* Phone: the panel is a sheet under the map (closed / half / full). Desktop ignores it. */
+function applySheet(){
+  document.body.dataset.sheet=S.sheet;
+  const tab=TABS.find(t=>t[0]===S.tab),g=$("#gt");
+  if(g)g.textContent=tab?tab[1].replace(/^\d /,""):"";
+  if(typeof map!=="undefined"&&map)setTimeout(()=>map.invalidateSize(),60);
+}
+function toggleSheet(){S.sheet=S.sheet==="full"?"half":"full";save();applySheet()}
+function closeSheet(){S.sheet="closed";save();applySheet();renderNav()}
+function setTab(t){
+  if(isMobile()&&S.tab===t&&S.sheet!=="closed")S.sheet="closed";          // tap the open tab again to close it
+  else{S.tab=t;if(isMobile()&&S.sheet==="closed")S.sheet="half"}
+  save();render();
+}
 function pick(id,fly){S.sel=id;save();render();const p=P(id);if(fly&&p)map.setView(p,Math.max(map.getZoom(),7))}
-function renderNav(){$("#nav").innerHTML=TABS.map(t=>`<button class="${S.tab===t[0]?"on":""}" onclick="setTab('${t[0]}')">${t[1]}</button>`).join("")}
+/* Tapping a marker on the map: show that target's details. */
+function selectOnMap(id){
+  S.sel=id;
+  if(isMobile()&&S.sheet==="closed")S.sheet="half";
+  save();render();
+  const d=$("#detail");if(isMobile()&&d&&d.scrollIntoView)d.scrollIntoView({block:"start"});
+}
+function renderNav(){
+  const open=!isMobile()||S.sheet!=="closed";
+  $("#nav").innerHTML=TABS.map(t=>{const s=NAVSHORT[t[0]];
+    return`<button class="${S.tab===t[0]&&open?"on":""}" onclick="setTab('${t[0]}')"><span class="ic">${s[0]}</span><span class="full">${t[1]}</span><span class="short">${s[1]}</span></button>`}).join("");
+}
+if(typeof window!=="undefined"&&window.addEventListener)window.addEventListener("resize",()=>{if(typeof map!=="undefined"&&map)map.invalidateSize();renderNav()});
 
 function renderSide(){
   const f={nav:panelNav,sci:panelSci,ter:panelTer,env:panelEnv,rte:panelRte,log:panelLog}[S.tab]||panelNav;
@@ -107,4 +135,4 @@ function renderDetail(){
 function renderStatus(){
   const o=objs(),n=o.filter(x=>x[1]).length,sci=T.filter(t=>t.type==="science");
   $("#st").innerHTML=`<span>MISSION: SIMULATED ${bd("blue")}</span><span>Targets visited ${S.vis.length}/${sci.length}</span><span>Route stops ${S.route.length}</span><span>Samples ${S.smp.length}</span><span>Objectives ${n}/${o.length}</span><div class="bar"><i style="width:${n/o.length*100}%"></i></div>`;
-                      }
+}
