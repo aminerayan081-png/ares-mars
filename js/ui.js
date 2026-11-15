@@ -59,7 +59,7 @@ function panelNav(){
 function panelSci(){
   return`<h3>Science Targets</h3>
   ${T.filter(t=>t.type==="science").map(t=>`<div class="item ${S.sel===t.id?"sel":""}" onclick="pick('${t.id}')">${S.vis.includes(t.id)?"✅":"⬜"} <b>${esc(t.name)}</b><br><span class="m">${P(t.id)?fc(P(t.id)):"📍 needs placing"}${S.route.includes(t.id)?" · in route":""}</span></div>`).join("")}
-  <p class="m">No published coordinates exist in our sources for these targets, so the astronaut pins each one on the map. A pinned position is ${bd("yellow")} user-placed, not a NASA coordinate.</p>`;
+  <p class="m">No published coordinates exist in our sources for these targets, so the astronaut pins each one on the map. A pinned position is ${bd("blue")} user-placed, not a NASA coordinate.</p>`;
 }
 
 function legTbl(){
@@ -121,7 +121,7 @@ function renderDetail(){
   const t=T_[S.sel],p=P(t.id);
   $("#detail").innerHTML=`<h3>Selected target</h3><h2 style="margin:0">${esc(t.name)}</h2>
   <p>${bd(t.cls)} ${t.type==="science"?"information from NASA / published sources":""}</p>
-  <p><b>Position:</b> ${fc(p)} ${p?(S.pos[t.id]?bd("yellow")+" user-placed":bd("green")+(t.coordStatus==="approximate"?" approximate":"")):""}<br>
+  <p><b>Position:</b> ${fc(p)} ${p?(S.pos[t.id]?bd("blue")+" user-placed":bd("green")+(t.coordStatus==="approximate"?" approximate":"")):""}<br>
   <b>Elevation:</b> ${E(t.id)!=null?E(t.id).toFixed(0)+" m":"not set"}</p>
   <p>${esc(t.summary||"")}</p>
   <h3>Why it matters</h3><p>${esc(t.why||"—")}</p>
@@ -129,7 +129,7 @@ function renderDetail(){
   <h3>Sources</h3><p>${src(t.sources)}</p>
   ${t.type==="science"?`<button class="pri" onclick="placeTarget()">📍 ${p?"Re-place":"Place"} on map</button> `:""}
   ${p&&t.type==="science"?`<button onclick="addToRoute()">➕ Add to EVA route</button> <button onclick="toggleVisited()">${S.vis.includes(t.id)?"↩ Unmark":"✔ Mark visited"}</button>`:""}
-  <p class="m">Drag a science marker to adjust it. Pinned positions are ${bd("yellow")} user-placed, not NASA coordinates; check them against NASA imagery.</p>`;
+  <p class="m">Drag a science marker to adjust it. Pinned positions are ${bd("blue")} user-placed, not NASA coordinates; check them against NASA imagery.</p>`;
 }
 
 function renderStatus(){
