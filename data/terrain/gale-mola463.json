@@ -1,0 +1,60 @@
+{
+  "name": "ARES Gale Crater elevation window (MOLA 463 m)",
+  "format": "Raw 16-bit signed integers, little-endian, row-major, first row is the NORTH edge, first column is the WEST edge. Value -32768 means no data.",
+  "file": "gale-mola463.bin",
+  "width": 360,
+  "height": 359,
+  "units": "metres",
+  "pixelSize_m": 463.0836,
+  "bounds": {
+    "west": 136.39455,
+    "east": 139.20705,
+    "north": -3.9961,
+    "south": -6.80079,
+    "note": "Outer pixel edges (assuming the file's pixel convention below)."
+  },
+  "projection": "Simple cylindrical, centre longitude 0 (from the file name and tie point), longitude positive east.",
+  "sphereRadius_m": {
+    "usedByTool": 3396190,
+    "impliedByFileTiePoint": 3396263.7,
+    "note": "ARES distance maths uses 3389500 m, a difference of about 0.2%."
+  },
+  "geoKeys": {
+    "modelType": 1,
+    "rasterType": 1,
+    "rasterTypeNote": "1 = PixelIsArea, 2 = PixelIsPoint. If PixelIsArea, positions are good to about one pixel (463 m).",
+    "text": "Mars2000_ECylindrical_clon0|GCS Name = GCS_Mars_2000_Sphere|Datum = Mars_2000_(Sphere)|Ellipsoid = Mars_2000_Sphere|Primem = Reference_Meridian||"
+  },
+  "heightReference": "Not stated in the file. Do not call these heights above sea level.",
+  "stats": {
+    "validPixels": 129240,
+    "noDataPixels": 0,
+    "min_m": -4607,
+    "max_m": 1347,
+    "mean_m": -2077.7,
+    "bradburyLanding_m": -4505,
+    "publishedBradbury_m": -4501,
+    "note": "Bradbury check is a rough sanity test only; it is not an independent verification."
+  },
+  "source": {
+    "fileUrl": "https://asc-pds-services.s3.us-west-2.amazonaws.com/wms_basemaps3/Mars/MOLA/mola128_mola64_merge_90Nto90S_SimpleC_clon0_cog.tif",
+    "fileName": "mola128_mola64_merge_90Nto90S_SimpleC_clon0_cog.tif",
+    "how": "This S3 link was given by a USGS staff member on the OpenPlanetary forum. It is not an official USGS product page, and it could change or disappear.",
+    "product": "MOLA 128 pixel/degree DEM merged with 64 pixel/degree (file name), 463 m per pixel",
+    "officialPage": "https://astrogeology.usgs.gov/search/map/mars_mgs_mola_dem_463m",
+    "licence": "CC0 according to the USGS Astropedia listing (not re-checked by this tool)"
+  },
+  "limitations": [
+    "463 m per pixel cannot show features smaller than several hundred metres, including boxwork ridges (about 1 to 2 m tall).",
+    "Not suitable for obstacle detection or any local safety assessment.",
+    "MOLA gaps between laser tracks are interpolated in this product (reported in project research; not re-checked here)."
+  ],
+  "evidence": "green",
+  "evidenceNote": "Elevation values come from the file unchanged. Only cropping to this window was done by ARES.",
+  "extracted": {
+    "date": "2026-11-15T18:05:12.524Z",
+    "tool": "ARES terrain-extract.html",
+    "bytesRead": 1019446,
+    "requests": 5
+  }
+}
