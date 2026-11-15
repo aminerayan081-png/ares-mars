@@ -46,7 +46,9 @@ function initMap(){
   map.on("click",e=>{
     if(!S.placing)return;
     S.pos[S.placing]=[+e.latlng.lat.toFixed(4),+e.latlng.lng.toFixed(4)];
-    S.sel=S.placing;S.placing=null;$("#map").classList.remove("pl");save();render();
+    S.sel=S.placing;S.placing=null;$("#map").classList.remove("pl");
+    if(isMobile()&&S.sheet==="closed")S.sheet="half";
+    save();render();
   });
 }
 
@@ -56,7 +58,7 @@ function drawMap(){
     const p=P(t.id);if(!p)return;
     const m=L.marker(p,{draggable:t.type==="science",
       icon:L.divIcon({className:"",iconSize:[16,16],html:`<div class="pin ${S.vis.includes(t.id)?"v":""} ${S.sel===t.id?"sel":""}"></div>`})}).bindTooltip(t.name);
-    m.on("click",()=>{S.sel=t.id;save();render()});
+    m.on("click",()=>selectOnMap(t.id));
     m.on("dragend",e=>{const l=e.target.getLatLng();S.pos[t.id]=[+l.lat.toFixed(4),+l.lng.toFixed(4)];save();render()});
     mk.addLayer(m);
   });
@@ -65,5 +67,6 @@ function drawMap(){
 }
 function placeTarget(){
   S.placing=S.sel;$("#map").classList.add("pl");
+  if(isMobile()){S.sheet="closed";save();applySheet()}   // close the panel so the whole map can be tapped
   notify("Tap the map to place: "+T_[S.sel].name,9000);
 }
