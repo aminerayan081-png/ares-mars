@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ARES: Data, resources and credits</title>
+<style>
+:root{color-scheme:dark}
+body{margin:0;padding:14px 16px 60px;background:#10121a;color:#e8e8ee;font:15px/1.5 system-ui,sans-serif;max-width:760px}
+h1{font-size:20px;margin:0 0 4px;letter-spacing:.04em}
+h2{font-size:16px;margin:24px 0 8px;color:#ff9d1c}
+.m{color:#9aa0b4;font-size:13px}
+.card{background:#1a1d29;border:1px solid #2c3042;border-radius:10px;padding:10px 12px;margin:8px 0}
+a{color:#7cc4ff;word-break:break-all}
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:1px 8px;border-radius:99px;margin-left:6px;background:#78350f;color:#fcd34d}
+.back{display:inline-block;margin-bottom:10px}
+</style>
+</head>
+<body>
+<a class="back" href="index.html">← Back to ARES</a>
+<h1>ARES: data, resources and credits</h1>
+<p class="m">ARES is a simulated mission-planning prototype. It is not affiliated with or endorsed by NASA or any space agency. Mission scenarios, routes, durations and doses shown in ARES are simulations or user assumptions unless labelled as real data.</p>
+
+<h2>NASA data and resources</h2>
+<div class="card"><a href="https://trek.nasa.gov/mars/" target="_blank" rel="noopener">NASA Mars Trek</a><br><span class="m">Viking colour mosaic and MOLA colour-shaded relief map layers shown in the Surface Navigation map (NASA/JPL).</span></div>
+<div class="card"><a href="https://trek.nasa.gov/tiles/apidoc/trekAPI.html?body=mars" target="_blank" rel="noopener">NASA Mars Trek WMTS tile services documentation</a><br><span class="m">How the Trek map tiles are requested.</span></div>
+<div class="card"><a href="https://www.nasa.gov/missions/mars-science-laboratory/curiosity-rover/nasas-curiosity-rover-sees-martian-spiderwebs-up-close/" target="_blank" rel="noopener">NASA JPL: Curiosity Rover Sees Martian "Spiderwebs" Up Close (23 Feb 2026)</a><br><span class="m">Source for the boxwork ridge, hollow and nodule descriptions.</span></div>
+<div class="card"><a href="https://science.nasa.gov/photojournal/curiosity-studies-nodules-on-boxwork-formations" target="_blank" rel="noopener">NASA Photojournal PIA26697: Curiosity Studies Nodules on Boxwork Formations</a><br><span class="m">MAHLI mosaic of nodules. Credit: NASA/JPL-Caltech/MSSS.</span></div>
+
+<h2>Other tools and resources</h2>
+<div class="card"><a href="https://leafletjs.com/" target="_blank" rel="noopener">Leaflet</a><br><span class="m">Open-source JavaScript library used for the 2D map.</span></div>
+<div class="card"><a href="https://astrogeology.usgs.gov/" target="_blank" rel="noopener">USGS Astrogeology Science Center</a><br><span class="m">Backup Viking MDIM 2.1 map layer (USGS / NASA Viking).</span></div>
+<div class="card"><a href="https://lamb.caltech.edu/documents/22303/JGR_Planets_-_2022_-_Hughes_-_Canyon_Wall_and_Floor_Debris_Deposits_in_Aeolis_Mons_Mars.pdf" target="_blank" rel="noopener">Hughes et al. 2022, JGR Planets: Aeolis Mons canyon deposits</a><span class="tag">UNCHECKED</span><br><span class="m">Cited for Gale Crater context. Marked unchecked in ARES because the specific claim was not confirmed against it.</span></div>
+<div class="card"><a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a><br><span class="m">Hosting.</span></div>
+<div class="card"><a href="https://claude.ai/" target="_blank" rel="noopener">Claude (Anthropic)</a><br><span class="m">AI assistant used to help research, write code and draft text for this project.</span></div>
+
+<h2>Records stored inside ARES</h2>
+<p class="m">These lists are read live from ARES's own data files, so they always match what the app uses.</p>
+<div id="live" class="m">Loading…</div>
+
+<script>
+"use strict";
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const safe=u=>(typeof u==="string"&&/^https?:\/\//i.test(u))?u:null;
+function items(d){
+  if(Array.isArray(d))return d;
+  if(d&&typeof d==="object"){
+    for(const k of ["sources","images","items","records"]){
+      if(Array.isArray(d[k]))return d[k];
+      if(d[k]&&typeof d[k]==="object")return Object.entries(d[k]).map(([id,v])=>Object.assign({id},v));
+    }
+    return Object.entries(d).filter(([k,v])=>v&&typeof v==="object"&&!Array.isArray(v)).map(([id,v])=>Object.assign({id},v));
+  }
+  return [];
+}
+function card(it){
+  const title=it.title||it.name||it.label||it.id||"(untitled)";
+  const url=safe(it.url||it.link||it.href||it.page||it.pageUrl);
+  const credit=it.credit||it.credits;
+  return '<div class="card">'+(url?'<a href="'+esc(url)+'" target="_blank" rel="noopener">'+esc(title)+'</a>':esc(title)+' <span class="m">(link to add)</span>')
+    +(credit?'<br><span class="m">'+esc(credit)+'</span>':'')+'</div>';
+}
+async function load(file,heading){
+  try{
+    const r=await fetch(file,{cache:"no-cache"});
+    if(!r.ok)throw new Error("HTTP "+r.status);
+    const list=items(await r.json());
+    return '<h2>'+esc(heading)+'</h2>'+(list.length?list.map(card).join(""):'<p class="m">No records found in '+esc(file)+'.</p>');
+  }catch(e){
+    return '<h2>'+esc(heading)+'</h2><p class="m">Could not load '+esc(file)+' ('+esc(e.message)+').</p>';
+  }
+}
+(async()=>{
+  const parts=await Promise.all([
+    load("data/sources.json","Science sources (data/sources.json)"),
+    load("data/images.json","Images (data/images.json)"),
+    load("data/targets.json","Target sources (data/targets.json)"),
+    load("data/environment.json","Environment sources (data/environment.json)")
+  ]);
+  $("#live").outerHTML=parts.join("");
+})();
+</script>
+</body>
+</html>
