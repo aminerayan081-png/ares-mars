@@ -6,6 +6,8 @@ const P=id=>S.pos[id]||(T_[id]?T_[id].ll:null);
 const E=id=>S.elev[id]!=null?S.elev[id]:(T_[id]?T_[id].elev:null);
 const isWp=id=>/^wp-\d+$/.test(id);
 const stopName=id=>T_[id]?T_[id].name:(S.wp[id]?S.wp[id].name:id);
+/* Minutes spent at a stop: the value you typed, else the default (science stops) or 0 (free waypoints). */
+const stopMin=id=>S.dur[id]!=null?S.dur[id]:(isWp(id)?0:S.stop);
 const rad=x=>x*Math.PI/180;
 const fc=ll=>ll?`${Math.abs(ll[0]).toFixed(3)}°${ll[0]<0?"S":"N"}, ${ll[1].toFixed(3)}°E`:"not placed";
 
@@ -38,14 +40,14 @@ function gradeLabel(s){
 function routeTotals(){
   const ok=legs().filter(l=>!l.miss);
   const km=ok.reduce((s,l)=>s+l.d,0)/1000;
-  const walkH=km/S.speed,stopH=S.route.filter(id=>!isWp(id)).length*S.stop/60,totH=walkH+stopH;
+  const walkH=km/S.speed,stopH=S.route.reduce((s,id)=>s+stopMin(id),0)/60,totH=walkH+stopH;
   const rate=ENV&&ENV.radiation?ENV.radiation.value:0;           // mGy per day (see environment.json)
   return{km,walkH,stopH,totH,doseUGy:rate*totH/SOLH*1000};
 }
 function addToRoute(){if(!S.route.includes(S.sel))S.route.push(S.sel);S.tab="rte";save();render()}
 function moveStop(i,d){const j=i+d;if(j<0||j>=S.route.length)return;[S.route[i],S.route[j]]=[S.route[j],S.route[i]];save();render()}
-function removeStop(i){const id=S.route[i];S.route.splice(i,1);dropWp(id);save();render()}
-function clearRoute(){S.route.filter(isWp).forEach(dropWp);S.route=[];save();render()}
+function removeStop(i){const id=S.route[i];S.route.splice(i,1);delete S.dur[id];dropWp(id);save();render()}
+function clearRoute(){S.route.filter(isWp).forEach(dropWp);S.route=[];S.dur={};save();render()}
 function dropWp(id){if(isWp(id)){delete S.wp[id];delete S.pos[id];delete S.elev[id]}}
 function addWaypoint(ll){
   const id="wp-"+S.nextWp++;
@@ -58,6 +60,11 @@ function addWaypoint(ll){
 function renameStop(i,v){
   const id=S.route[i];if(!isWp(id))return;
   S.wp[id].name=String(v).trim().slice(0,60)||"WP"+id.slice(3);
+  save();render();
+}
+function setDur(i,v){
+  const id=S.route[i],n=parseFloat(v);
+  if(Number.isFinite(n)&&n>=0)S.dur[id]=n;else delete S.dur[id];
   save();render();
 }
 function setSpeed(v){const n=parseFloat(v);S.speed=n>0?n:1.5;save();render()}
