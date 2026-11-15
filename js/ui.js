@@ -129,6 +129,46 @@ function planBlock(){
   <p class="m">${bd("yellow")} km is straight-line distance, not a path. ${bd("blue")} EVA hours use each plan's own speed and stop times. ${bd("yellow")}${warn} µGy uses the historical average rate. * means a stop is not placed yet, so its legs are left out. "Objective reached" means the objective is a stop in that plan ("–" means no objective chosen). This is a planning comparison, not a safety assessment.</p>`:""}`;
 }
 
+function setStopElev(i,v){
+  const id=S.route[i],n=parseFloat(v);
+  if(id==null)return;
+  if(Number.isFinite(n))S.elev[id]=n;else delete S.elev[id];
+  save();render();
+}
+
+function profileBlock(){
+  const q=seq(),L_=legs();
+  const note='<p class="m">Terrain limits: the line joins stops with straight segments, so it does not show the real ground between them (rocks, ridges, sand). The height scale is stretched to fit the values, so slopes look steeper than they are. ARES has no elevation dataset yet (a later phase), and this profile does not show whether a route is safe or traversable.</p>';
+  let h=`<h3>Elevation profile</h3><p class="m">${bd("blue")} Elevations are values you type from a cited source (for example Mars Trek). ARES does not read heights from the map. Bradbury Landing's elevation is ${bd("green")} published.</p>`;
+  h+=`<table><tr><th>Stop</th><th>Elevation</th></tr>`+q.map((id,i)=>{
+    const e=E(id);
+    const inp=i>0?` <input type="number" style="width:5.5em" placeholder="m" value="${S.elev[id]!=null?S.elev[id]:""}" onchange="setStopElev(${i-1},this.value)">`:"";
+    return`<tr><td>${esc(stopName(id))}</td><td>${e!=null?e.toFixed(0)+" m":'<span class="m">no elevation data</span>'}${inp}</td></tr>`;
+  }).join("")+`</table>`;
+  if(L_.some(l=>l.miss))return h+'<p class="m">Profile not drawn: at least one stop is not placed on the map yet.</p>'+note;
+  let x=0;
+  const pts=q.map((id,i)=>{if(i>0)x+=L_[i-1].d/1000;return{x,e:E(id)}});
+  const withE=pts.filter(p=>p.e!=null);
+  if(withE.length<2)return h+'<p class="m">Profile not drawn: it needs an elevation for at least two stops.</p>'+note;
+  const W=320,H=150,pl=48,pr=10,pt=10,pb=24;
+  const xmax=Math.max(x,0.001);
+  const es=withE.map(p=>p.e),emin=Math.min(...es),emax=Math.max(...es),span=Math.max(emax-emin,1);
+  const X=v=>pl+(v/xmax)*(W-pl-pr),Y=v=>pt+(1-(v-emin)/span)*(H-pt-pb);
+  let svg=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Elevation profile">`;
+  svg+=`<line x1="${pl}" y1="${pt}" x2="${pl}" y2="${H-pb}" stroke="#888"/><line x1="${pl}" y1="${H-pb}" x2="${W-pr}" y2="${H-pb}" stroke="#888"/>`;
+  svg+=`<text x="${pl-4}" y="${pt+4}" fill="#ccc" font-size="10" text-anchor="end">${emax.toFixed(0)} m</text>`;
+  svg+=`<text x="${pl-4}" y="${H-pb}" fill="#ccc" font-size="10" text-anchor="end">${emin.toFixed(0)} m</text>`;
+  svg+=`<text x="${pl}" y="${H-6}" fill="#ccc" font-size="10">0 km</text>`;
+  svg+=`<text x="${W-pr}" y="${H-6}" fill="#ccc" font-size="10" text-anchor="end">${xmax.toFixed(1)} km</text>`;
+  for(let i=1;i<pts.length;i++){
+    const a=pts[i-1],b=pts[i];
+    if(a.e!=null&&b.e!=null)svg+=`<line x1="${X(a.x)}" y1="${Y(a.e)}" x2="${X(b.x)}" y2="${Y(b.e)}" stroke="#ff9d1c" stroke-width="2"/>`;
+  }
+  pts.forEach(p=>{if(p.e!=null)svg+=`<circle cx="${X(p.x)}" cy="${Y(p.e)}" r="4" fill="#4fc3f7"/>`});
+  svg+="</svg>";
+  return h+svg+'<p class="m">Horizontal axis: straight-line distance along the stops (🟡 calculated). A gap in the line means a stop has no elevation.</p>'+note;
+}
+
 function panelRte(){
   const t=routeTotals();
   const warn=(ENV&&ENV.radiation&&!ENV.radiation.verified)?" "+WARN:"";
