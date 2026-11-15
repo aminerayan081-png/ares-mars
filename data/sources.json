@@ -1,0 +1,83 @@
+{
+  "note": "ARES Phase 3 source records. 'verified' means ARES opened the page on the checkedOn date and confirmed the stated facts. Nothing here is a citation we have not read.",
+  "sources": {
+    "jpl-boxwork": {
+      "title": "NASA's Curiosity Rover Sees Martian 'Spiderwebs' Up Close",
+      "publisher": "NASA (written by Jet Propulsion Laboratory)",
+      "type": "nasa-article",
+      "url": "https://www.nasa.gov/missions/mars-science-laboratory/curiosity-rover/nasas-curiosity-rover-sees-martian-spiderwebs-up-close/",
+      "published": "2026-02-23",
+      "verified": true,
+      "checkedOn": "2026-11-15",
+      "supports": "Boxwork ridges roughly 1 to 2 m tall with sandy hollows; the groundwater-and-minerals explanation is a proposal; central fractures confirmed up close; nodules found on ridge walls and in hollows, not near fractures; clay found in a ridge sample and carbonate in a hollow sample.",
+      "limits": "News article, not a peer-reviewed paper. Gives no map coordinates. Does not give a drill-site name for the ridge or hollow samples.",
+      "relatedTargets": ["ridge", "hollow", "nodule"],
+      "relatedImages": ["pia26697"]
+    },
+    "jpl-boxwork-2025": {
+      "title": "NASA's Curiosity Mars Rover Starts Unpacking Boxwork Formations",
+      "publisher": "NASA Jet Propulsion Laboratory",
+      "type": "jpl-article",
+      "url": "https://www.jpl.nasa.gov/news/nasas-curiosity-mars-rover-starts-unpacking-boxwork-formations/",
+      "published": "2025-06-23",
+      "verified": true,
+      "checkedOn": "2026-11-15",
+      "supports": "First close-up views of boxwork; patterns extend for miles on Mount Sharp and were not seen elsewhere on the mountain; bedrock between ridges differs in composition and has calcium sulfate veins; the rock Altadena was drilled on 8 June 2025.",
+      "limits": "News article, not a peer-reviewed paper. Says some ridges are 'just a few inches tall', which differs from the 1 to 2 m in the 2026 article. Gives no coordinates.",
+      "relatedTargets": ["ridge", "hollow"],
+      "relatedImages": []
+    },
+    "pia26552": {
+      "title": "PIA26552: Curiosity on the Road to Boxwork Formations",
+      "publisher": "NASA Photojournal",
+      "type": "photojournal",
+      "url": "https://science.nasa.gov/photojournal/curiosity-on-the-road-to-boxwork-formations/",
+      "published": "2025-04-24",
+      "verified": true,
+      "checkedOn": "2026-11-15",
+      "supports": "Mastcam panorama taken 9 March 2025 (sol 4476) showing the butte nicknamed Gould Mesa, whose dark ridges and cliff band may be the first glimpses of boxwork.",
+      "limits": "The page's search-engine description says 18 Nov 2020 (sol 2946), which conflicts with the page text (9 March 2025, sol 4476). ARES uses the page text. Gives no coordinates.",
+      "relatedTargets": [],
+      "relatedImages": ["pia26552"]
+    },
+    "pia26697": {
+      "title": "PIA26697: Curiosity Studies Nodules on Boxwork Formations",
+      "publisher": "NASA Photojournal",
+      "type": "photojournal",
+      "url": "https://science.nasa.gov/photojournal/curiosity-studies-nodules-on-boxwork-formations/",
+      "published": "2026-02-23",
+      "verified": true,
+      "checkedOn": "2026-11-15",
+      "supports": "MAHLI mosaic of 50 images taken 21 Aug 2025 (sol 4636); nodules found along ridge walls and in hollows; wavy ridges between nodule groups are calcium sulfate veins.",
+      "limits": "Does not state where on the map the image was taken.",
+      "relatedTargets": ["nodule"],
+      "relatedImages": ["pia26697"]
+    },
+    "hughes2022": {
+      "title": "Hughes et al. 2022, JGR Planets: Canyon wall and floor debris deposits in Aeolis Mons",
+      "publisher": "Journal of Geophysical Research: Planets",
+      "type": "journal-paper",
+      "url": "https://lamb.caltech.edu/documents/22303/JGR_Planets_-_2022_-_Hughes_-_Canyon_Wall_and_Floor_Debris_Deposits_in_Aeolis_Mons_Mars.pdf",
+      "published": "2022",
+      "verified": false,
+      "checkedOn": null,
+      "supports": "Not yet checked by ARES.",
+      "limits": "ARES has not opened this paper. Do not treat any ARES claim as supported by it until it is checked.",
+      "relatedTargets": ["gale"],
+      "relatedImages": []
+    },
+    "msl-overview": {
+      "title": "NASA MSL mission overview (landing coordinates)",
+      "publisher": "NASA",
+      "type": "mission-page",
+      "url": null,
+      "published": null,
+      "verified": false,
+      "checkedOn": null,
+      "supports": "Not yet checked by ARES.",
+      "limits": "No verified link yet, so the Bradbury Landing coordinates have no traceable page in ARES.",
+      "relatedTargets": ["home"],
+      "relatedImages": []
+    }
+  }
+}
