@@ -2,7 +2,7 @@
 /* ARES state: one object (S) that is saved in the browser (localStorage). */
 const STORE_KEY="ares";
 const TABS=[["nav","1 Surface Navigation"],["sci","2 Science Targets"],["ter","3 Terrain Intel"],["env","4 Environment"],["rte","5 EVA Planner"],["log","6 Field Log"]];
-const S={tab:"nav",sel:"home",route:[],vis:[],log:[],smp:[],pos:{},elev:{},speed:1.5,stop:30,placing:null,sheet:"closed",wp:{},nextWp:1,dur:{}};
+const S={tab:"nav",sel:"home",route:[],vis:[],log:[],smp:[],pos:{},elev:{},speed:1.5,stop:30,placing:null,sheet:"closed",wp:{},nextWp:1,dur:{},plans:[],nextPlan:1,activePlan:null};
 
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -32,8 +32,22 @@ function cleanState(ids){
   const dur={};
   if(S.dur&&typeof S.dur==="object")for(const k in S.dur)if(S.route.includes(k)&&Number.isFinite(S.dur[k])&&S.dur[k]>=0)dur[k]=S.dur[k];
   S.dur=dur;
-  let mx=0;for(const k in S.wp)mx=Math.max(mx,+k.slice(3));
+  /* saved plans */
+  S.plans=(Array.isArray(S.plans)?S.plans:[]).filter(p=>p&&/^plan-\d+$/.test(p.id)&&typeof p.name==="string"&&Array.isArray(p.route)&&p.wp&&typeof p.wp==="object"&&p.pos&&typeof p.pos==="object").slice(0,10);
+  S.plans.forEach(p=>{
+    p.route=p.route.filter(id=>ids.includes(id)||(/^wp-\d+$/.test(id)&&p.wp[id]&&isLL(p.pos[id])));
+    p.elev=(p.elev&&typeof p.elev==="object")?p.elev:{};
+    p.dur=(p.dur&&typeof p.dur==="object")?p.dur:{};
+    if(!(p.speed>0))p.speed=1.5;
+    if(!(p.stop>=0))p.stop=30;
+  });
+  if(!S.plans.some(p=>p.id===S.activePlan))S.activePlan=null;
+  let mx=0;
+  for(const k in S.wp)mx=Math.max(mx,+k.slice(3));
+  S.plans.forEach(p=>p.route.forEach(id=>{if(/^wp-\d+$/.test(id))mx=Math.max(mx,+id.slice(3))}));
   S.nextWp=Math.max(Number.isInteger(S.nextWp)&&S.nextWp>0?S.nextWp:1,mx+1);
+  let mp=0;S.plans.forEach(p=>{mp=Math.max(mp,+p.id.slice(5))});
+  S.nextPlan=Math.max(Number.isInteger(S.nextPlan)&&S.nextPlan>0?S.nextPlan:1,mp+1);
   if(!(S.speed>0))S.speed=1.5;
   if(!(S.stop>=0))S.stop=30;
   if(!ids.includes(S.sel))S.sel="home";
