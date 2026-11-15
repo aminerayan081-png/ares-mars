@@ -178,6 +178,7 @@ function panelRte(){
   <ol>${S.route.map((id,i)=>`<li>${isWp(id)?`<input value="${esc(stopName(id))}" maxlength="60" onchange="renameStop(${i},this.value)">`:esc(stopName(id))} <span class="m">${fc(P(id))}</span><br><span class="m">Time at stop:</span> <input type="number" min="0" style="width:4.5em" value="${stopMin(id)}" onchange="setDur(${i},this.value)"> <span class="m">min</span> <button onclick="moveStop(${i},-1)">↑</button><button onclick="moveStop(${i},1)">↓</button><button onclick="removeStop(${i})">✕</button></li>`).join("")||"<li class='m'>empty</li>"}</ol>
   ${legTbl()}
   ${objBlock()}
+  ${profileBlock()}
   <h3>Totals</h3>
   <p>${bd("yellow")} Straight-line distance: <b>${t.km.toFixed(2)} km</b><br><span class="m">Method: haversine on a sphere, R = ${MARS_R_KM} km. Not a traversable path.</span></p>
   <p>${bd("blue")} Assumptions: walking speed <input type="number" step=".1" value="${S.speed}" onchange="setSpeed(this.value)"> km/h, default <input type="number" value="${S.stop}" onchange="setStop(this.value)"> min per science stop (free waypoints default to 0)</p>
