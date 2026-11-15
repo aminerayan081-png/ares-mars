@@ -64,7 +64,7 @@ function panelSci(){
 
 function legTbl(){
   const L_=legs();if(!L_.length)return"";
-  const nm=id=>esc(T_[id].name.split(" ")[0]);
+  const nm=id=>esc(isWp(id)?stopName(id):stopName(id).split(" ")[0]);
   return`<table><tr><th>Leg</th><th>km</th><th>Δh</th><th>Mean gradient</th></tr>${L_.map(l=>{
     if(l.miss)return`<tr><td>${nm(l.a)}→${nm(l.b)}</td><td colspan="3" class="m">place both points</td></tr>`;
     const d=gradeLabel(l.sl);
