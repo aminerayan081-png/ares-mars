@@ -1,0 +1,93 @@
+{
+  "note": "Only claims checked against a source. coordStatus 'unplaced' means no verified coordinates exist; the astronaut pins the target on the map.",
+  "targets": [
+    {
+      "id": "home",
+      "name": "Bradbury Landing (reference base)",
+      "type": "base",
+      "evidence": "green",
+      "lat": -4.5895,
+      "lon": 137.4417,
+      "elev_m": -4501,
+      "coordStatus": "published",
+      "summary": "Curiosity's landing site (6 Aug 2012). Used as the start point of the simulated EVA.",
+      "why": "A published location and elevation give a fixed anchor for distance calculations.",
+      "limits": "Reference point only. The boxwork lies higher up Mount Sharp.",
+      "sources": ["msl-overview"]
+    },
+    {
+      "id": "gale",
+      "name": "Gale Crater (approx. centre)",
+      "type": "landmark",
+      "evidence": "green",
+      "lat": -5.4,
+      "lon": 137.8,
+      "elev_m": null,
+      "coordStatus": "approximate",
+      "summary": "Gale Crater is about 154 km across. Mount Sharp, about 5 km tall, rises from its centre.",
+      "why": "Orientation landmark.",
+      "limits": "Centre position is approximate.",
+      "sources": ["hughes2022", "jpl-boxwork"]
+    },
+    {
+      "id": "ridge",
+      "name": "Boxwork ridge",
+      "type": "science",
+      "evidence": "green",
+      "lat": null,
+      "lon": null,
+      "elev_m": null,
+      "coordStatus": "unplaced",
+      "summary": "Boxwork ridges stand roughly 1 to 2 m tall, crisscross the surface for miles, and have sandy hollows between them. Curiosity confirmed that dark lines along the ridges are fractures.",
+      "why": "Scientists propose groundwater flowed through fractures and left minerals that hardened the ridges, while wind removed the softer rock between. A drilled ridge sample contained clay minerals.",
+      "limits": "Ridges can be not much wider than Curiosity itself. How this applies to an astronaut on foot is not established.",
+      "sources": ["jpl-boxwork"]
+    },
+    {
+      "id": "hollow",
+      "name": "Sandy hollow between ridges",
+      "type": "science",
+      "evidence": "green",
+      "lat": null,
+      "lon": null,
+      "elev_m": null,
+      "coordStatus": "unplaced",
+      "summary": "Sandy depressions between ridges. A drilled bedrock sample from a hollow contained carbonate minerals.",
+      "why": "Comparing clay in the ridge with carbonate in the hollow helps test how groundwater shaped each.",
+      "limits": "JPL engineers warned of wheel slip and turning trouble in the sand of hollows. This is a rover observation, not established for an astronaut.",
+      "sources": ["jpl-boxwork"]
+    },
+    {
+      "id": "nodule",
+      "name": "Nodule field",
+      "type": "science",
+      "evidence": "green",
+      "lat": null,
+      "lon": null,
+      "elev_m": null,
+      "coordStatus": "unplaced",
+      "summary": "Pea-sized bumpy nodules imaged by Curiosity's MAHLI camera on 21 Aug 2025 (sol 4636), a 50-image mosaic, PIA26697. They were found along ridge walls and in hollows, not near the central fractures.",
+      "why": "Nodules formed from minerals left as groundwater dried out. Scientists say they cannot yet fully explain why the nodules sit where they do.",
+      "limits": "The sources we have do not give the map location of this image.",
+      "sources": ["pia26697", "jpl-boxwork"]
+    }
+  ],
+  "sources": {
+    "jpl-boxwork": {
+      "title": "NASA JPL: Curiosity Rover Sees Martian 'Spiderwebs' Up Close (23 Feb 2026)",
+      "url": "https://www.jpl.nasa.gov/news/nasas-curiosity-rover-sees-martian-spiderwebs-up-close/"
+    },
+    "pia26697": {
+      "title": "NASA Photojournal PIA26697: Curiosity Studies Nodules on Boxwork Formations. Credit NASA/JPL-Caltech/MSSS",
+      "url": "https://science.nasa.gov/photojournal/curiosity-studies-nodules-on-boxwork-formations"
+    },
+    "hughes2022": {
+      "title": "Hughes et al. 2022, JGR Planets, Aeolis Mons canyon deposits",
+      "url": "https://lamb.caltech.edu/documents/22303/JGR_Planets_-_2022_-_Hughes_-_Canyon_Wall_and_Floor_Debris_Deposits_in_Aeolis_Mons_Mars.pdf"
+    },
+    "msl-overview": {
+      "title": "NASA MSL mission overview: landing at 4.5895°S, 137.4417°E, -4501 m (link to publisher page still to add)",
+      "url": null
+    }
+  }
+}
