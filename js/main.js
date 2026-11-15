@@ -12,5 +12,6 @@ function fatal(msg){
     loadState();cleanState(T.map(t=>t.id));
         initMap();render();
     if(typeof loadScience==="function")loadScience();
+    if(typeof initTerrain==="function")initTerrain();
   }catch(e){fatal("Start-up error: "+e.message)}
 })();
