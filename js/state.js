@@ -2,12 +2,14 @@
 /* ARES state: one object (S) that is saved in the browser (localStorage). */
 const STORE_KEY="ares";
 const TABS=[["nav","1 Surface Navigation"],["sci","2 Science Targets"],["ter","3 Terrain Intel"],["env","4 Environment"],["rte","5 EVA Planner"],["log","6 Field Log"]];
-const S={tab:"nav",sel:"home",route:[],vis:[],log:[],smp:[],pos:{},elev:{},speed:1.5,stop:30,placing:null,sheet:"closed",wp:{},nextWp:1,dur:{},plans:[],nextPlan:1,activePlan:null};
+const S={tab:"nav",sel:"home",route:[],vis:[],log:[],smp:[],pos:{},elev:{},speed:1.5,stop:30,placing:null,sheet:"closed",wp:{},nextWp:1,dur:{},plans:[],nextPlan:1,activePlan:null,obj:null};
 
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const now=()=>new Date().toISOString().slice(0,16).replace("T"," ")+" UTC";
 const isLL=a=>Array.isArray(a)&&a.length===2&&a.every(Number.isFinite);
+/* An objective must be a science target that is placed on the map. */
+const objOk=id=>!!(id&&T_[id]&&T_[id].type==="science"&&(S.pos[id]||T_[id].ll));
 
 function loadState(){
   try{const o=JSON.parse(localStorage.getItem(STORE_KEY)||"{}");if(o&&typeof o==="object")Object.assign(S,o)}catch(e){}
@@ -40,7 +42,9 @@ function cleanState(ids){
     p.dur=(p.dur&&typeof p.dur==="object")?p.dur:{};
     if(!(p.speed>0))p.speed=1.5;
     if(!(p.stop>=0))p.stop=30;
+    p.obj=objOk(p.obj)?p.obj:null;
   });
+  S.obj=objOk(S.obj)?S.obj:null;
   if(!S.plans.some(p=>p.id===S.activePlan))S.activePlan=null;
   let mx=0;
   for(const k in S.wp)mx=Math.max(mx,+k.slice(3));
