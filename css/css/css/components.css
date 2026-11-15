@@ -1,0 +1,14 @@
+.b{font-size:11px;padding:1px 6px;border-radius:9px;border:1px solid;white-space:nowrap}
+.green{color:var(--g)}.yellow{color:var(--y)}.blue{color:var(--b)}.warn{color:var(--y);border-style:dashed}
+.item{padding:7px;border:1px solid var(--l);border-radius:4px;margin:4px 0;cursor:pointer}
+.item:hover,.item.sel{border-color:var(--a)}
+.item.static{cursor:default}
+table{width:100%;border-collapse:collapse;font-size:12px}
+td,th{border-bottom:1px solid var(--l);padding:3px;text-align:left}
+.gr2{color:var(--y)}.gr3{color:var(--a);font-weight:600}
+.pin{width:16px;height:16px;border-radius:50%;border:2px solid #fff;background:var(--a);box-shadow:0 0 8px var(--a)}
+.pin.v{background:var(--g)}
+.pin.s{border-color:var(--a);background:var(--g);border-radius:2px}
+.pin.sel{transform:scale(1.5)}
+.bar{flex:1;min-width:120px;height:8px;background:var(--l);border-radius:4px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--a);width:0;transition:width .6s}
