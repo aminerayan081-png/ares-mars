@@ -96,8 +96,9 @@ function panelEnv(){
 function panelRte(){
   const t=routeTotals();
   return`<h3>EVA Route Planner</h3>
-  <p class="m">Start: Bradbury Landing. Add stops from the target details panel.</p>
-  <ol>${S.route.map((id,i)=>`<li>${esc(T_[id].name)} <button onclick="moveStop(${i},-1)">↑</button><button onclick="moveStop(${i},1)">↓</button><button onclick="removeStop(${i})">✕</button></li>`).join("")||"<li class='m'>empty</li>"}</ol>
+  <p class="m">Start: Bradbury Landing. Add science stops from the target details panel, or add a free waypoint anywhere on the map. A free waypoint is ${bd("blue")} user-placed, and you can drag its blue marker to move it.</p>
+  <button class="pri" onclick="placeWaypoint()">➕ Add waypoint on map</button>
+  <ol>${S.route.map((id,i)=>`<li>${isWp(id)?`<input value="${esc(stopName(id))}" maxlength="60" onchange="renameStop(${i},this.value)">`:esc(stopName(id))} <span class="m">${fc(P(id))}</span> <button onclick="moveStop(${i},-1)">↑</button><button onclick="moveStop(${i},1)">↓</button><button onclick="removeStop(${i})">✕</button></li>`).join("")||"<li class='m'>empty</li>"}</ol>
   ${legTbl()}
   <h3>Totals</h3>
   <p>${bd("yellow")} Straight-line distance: <b>${t.km.toFixed(2)} km</b><br><span class="m">Method: haversine on a sphere, R = ${MARS_R_KM} km. Not a traversable path.</span></p>
@@ -105,7 +106,6 @@ function panelRte(){
   <p>${bd("blue")} Est. EVA time: <b>${t.totH.toFixed(1)} h</b> (walk ${t.walkH.toFixed(1)} + stops ${t.stopH.toFixed(1)})<br>${bd("yellow")} Est. radiation dose: <b>${t.doseUGy.toFixed(1)} µGy</b> (historical average rate; see Environment tab)</p>
   <button onclick="clearRoute()">Clear route</button>`;
 }
-
 function panelLog(){
   return`<h3>Astronaut Field Log</h3>
   <p class="m">Notes are about: <b>${esc(T_[S.sel].name)}</b></p>
