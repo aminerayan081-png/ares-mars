@@ -1,6 +1,6 @@
 "use strict";
 /* The Leaflet map: basemaps, grid, markers, route line, messages. */
-let map,mk,rl,tileErrs=0;
+let let addingWp=false;
 
 /* Mars-sized coordinate system, so the scale bar measures Mars kilometres, not Earth kilometres. */
 const MARS_CRS=L.extend({},L.CRS.EPSG4326,{R:MARS_R_KM*1000});
