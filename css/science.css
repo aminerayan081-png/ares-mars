@@ -1,0 +1,14 @@
+.sci{min-width:0;overflow-wrap:anywhere}
+.sci-search{width:100%;box-sizing:border-box;min-height:44px;font-size:16px;margin:6px 0}
+.sci-bar{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.sci-bar label{flex:1 1 140px;min-width:0;font-size:12px}
+.sci-bar select{width:100%;box-sizing:border-box;min-height:44px;font-size:16px;margin-top:2px}
+.sci-card{padding:12px;margin:8px 0;border:1px solid rgba(255,157,28,.35);border-radius:6px;cursor:pointer}
+.sci-btn{min-height:44px;padding:8px 14px;font-size:15px;margin:4px 6px 4px 0}
+.sci-tag{display:inline-block;padding:1px 6px;border:1px solid rgba(128,128,128,.6);border-radius:4px;font-size:12px;margin-right:4px}
+details.sci-d{margin:8px 0;border-top:1px solid rgba(128,128,128,.35);padding-top:4px}
+details.sci-d summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-weight:600}
+.sci-d ul{padding-left:18px;margin:6px 0}
+.sci-d li{margin:6px 0}
+.sci-src,.sci-img{margin:10px 0;padding-bottom:8px;border-bottom:1px solid rgba(128,128,128,.25)}
+.sci-img img{display:block;max-width:100%;height:auto;max-height:180px;object-fit:contain;margin-bottom:6px}
