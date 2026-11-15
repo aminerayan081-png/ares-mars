@@ -1,0 +1,140 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>ARES — Autonomous Reconnaissance & Exploration System</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+<style>
+:root{--bg:#07080a;--p:#101216;--l:#262a31;--t:#e6e1d8;--m:#8a8f98;--a:#ff9d1c;--g:#3ddc84;--y:#ffd23f;--b:#4aa3ff}
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:var(--bg);color:var(--t);font:14px/1.45 system-ui,sans-serif}
+body{display:grid;grid-template-rows:auto 1fr auto;grid-template-columns:330px 1fr 330px;grid-template-areas:"h h h" "s m d" "f f f";height:100vh}
+header{grid-area:h;padding:8px 12px;border-bottom:1px solid var(--a);display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+header h1{margin:0;font-size:18px;letter-spacing:4px;color:var(--a)}header small{color:var(--m)}
+#side{grid-area:s}#detail{grid-area:d}#side,#detail{background:var(--p);overflow:auto;padding:10px;border:1px solid var(--l)}
+#mapw{grid-area:m;position:relative}#map{height:100%;background:#000;cursor:grab}#map.pl{cursor:crosshair}
+#co{position:absolute;bottom:6px;left:6px;z-index:999;background:#000c;color:var(--a);padding:3px 8px;font:12px monospace}
+footer{grid-area:f;padding:8px 12px;border-top:1px solid var(--a);display:flex;gap:16px;align-items:center;flex-wrap:wrap;font-size:12px}
+.bar{flex:1;min-width:120px;height:8px;background:var(--l);border-radius:4px;overflow:hidden}.bar i{display:block;height:100%;background:var(--a);width:0;transition:width .6s}
+nav{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:10px}
+button,input,textarea,select{font:inherit;color:var(--t);background:#181b21;border:1px solid var(--l);border-radius:4px;padding:6px 8px}
+button{cursor:pointer}button:hover,button.on{border-color:var(--a);color:var(--a)}button.pri{background:var(--a);color:#000;border-color:var(--a)}
+h3{margin:12px 0 4px;color:var(--a);font-size:13px;letter-spacing:1px;text-transform:uppercase}
+.b{font-size:11px;padding:1px 6px;border-radius:9px;border:1px solid;white-space:nowrap}.green{color:var(--g)}.yellow{color:var(--y)}.blue{color:var(--b)}
+.item{padding:7px;border:1px solid var(--l);border-radius:4px;margin:4px 0;cursor:pointer}.item:hover,.item.sel{border-color:var(--a)}
+.m{color:var(--m);font-size:12px}a{color:var(--a)}table{width:100%;border-collapse:collapse;font-size:12px}td,th{border-bottom:1px solid var(--l);padding:3px;text-align:left}
+.pin{width:16px;height:16px;border-radius:50%;border:2px solid #fff;background:var(--a);box-shadow:0 0 8px var(--a)}.pin.v{background:var(--g)}.pin.s{border-color:var(--a);background:var(--g);border-radius:2px}.pin.sel{transform:scale(1.5)}
+textarea{width:100%}input[type=number]{width:80px}
+@media(max-width:800px){body{display:block;height:auto}#mapw{height:50vh}#side,#detail{max-height:none}}
+</style></head><body>
+<header><h1>ARES</h1><small>Autonomous Reconnaissance & Exploration System · Lower Mount Sharp, Gale Crater · SIMULATED MISSION — no live telemetry or live Mars weather</small>
+<span><span class="b green">🟢 REAL DATA</span> <span class="b yellow">🟡 CALCULATION</span> <span class="b blue">🔵 SIMULATION</span></span></header>
+<section id="side"><nav id="nav"></nav><div id="sc"></div></section>
+<div id="mapw"><div id="map"></div><div id="co">—</div></div>
+<aside id="detail"></aside>
+<footer id="st"></footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script>
+// ===== DATA (edit here). ll = [lat, lon°E] only where a published source gives it; otherwise null → astronaut pins it on the map =====
+const SRC={
+ box:["NASA: Curiosity sees Martian spiderwebs up close","https://www.nasa.gov/missions/mars-science-laboratory/curiosity-rover/NASAs-curiosity-rover-sees-martian-spiderwebs-up-close/"],
+ jpl:["JPL: Curiosity starts unpacking boxwork (Jun 2025)","https://www.jpl.nasa.gov/news/nasas-curiosity-mars-rover-starts-unpacking-boxwork-formations/"],
+ pia:["NASA Photojournal PIA26552","https://photojournal.jpl.nasa.gov/catalog/PIA26552"],
+ gsa:["GSA 2025 abstract: Curiosity's boxwork interval","https://gsameetings.secure-platform.com/connects25/solicitations/103002/sessiongallery/schedule/items/95386/application/10634"],
+ rems:["Ruíz et al. 2025, Remote Sensing 17, 368 (REMS)","https://mdpi-res.com/d_attachment/remotesensing/remotesensing-17-00368/article_deploy/remotesensing-17-00368.pdf"],
+ rad:["Hassler et al. 2014, Science (MSL/RAD)","https://typeset.io/pdf/mars-surface-radiation-environment-measured-with-the-mars-244eildtx0.pdf"],
+ trek:["NASA Mars Trek","https://trek.nasa.gov/mars/"],pds:["PDS (PLACES waypoints, MSL data)","https://pds.nasa.gov/"],
+ raw:["MSL raw images","https://mars.nasa.gov/msl/multimedia/raw-images/"]};
+const T=[
+{id:"home",name:"Bradbury Landing (reference base)",type:"base",cls:"green",ll:[-4.49,137.42],elev:-4500.971,
+ info:"Curiosity landing site, used here as the start/reference point of the simulated EVA route.",why:"Known, published location and elevation — an anchor for distance and elevation-change calculations.",haz:"None assessed.",s:["rems"]},
+{id:"contact",name:"Layered Sulfate → Boxwork contact",type:"sci",cls:"green",ll:null,elev:null,
+ info:"Curiosity crossed from the Layered Sulfate unit into the mapped boxwork interval on sol 4534 (7 May 2025), at the eastern edge of the mapped boxwork.",why:"A geological boundary: the best place to compare 'normal' sulfate layers with boxwork bedrock.",haz:"🔵 Unassessed — check slope once placed.",s:["gsa","pia"]},
+{id:"ridge",name:"Boxwork ridge",type:"sci",cls:"green",ll:null,elev:null,
+ info:"Low ridges roughly 1–2 m tall, forming a web-like network that spans ~10–20 km seen from orbit. Curiosity studied them up close in 2025.",why:"Mineralised ridges may record where groundwater flowed and cemented the rock. A 2025 ridge sample is reported (secondary source) to contain clay minerals — verify on nasa.gov.",haz:"🔵 Assessment: ridge relief of 1–2 m means ledges/steps to cross.",s:["box","jpl"]},
+{id:"hollow",name:"Sandy hollow between ridges",type:"sci",cls:"green",ll:null,elev:null,
+ info:"Sandy depressions between ridges. JPL reports the bedrock between ridges differs in composition from other Mount Sharp layers.",why:"Comparing hollow vs ridge rock tests how groundwater altered each. A hollow sample is reported (secondary source) to contain carbonate — verify.",haz:"🔵 Assessment: loose sand may reduce traction and hide rocks.",s:["jpl","box"]},
+{id:"nodule",name:"Nodule field",type:"sci",cls:"green",ll:null,elev:null,
+ info:"Pea-size, bumpy nodules imaged by Curiosity on 21 Aug 2025, formed from minerals left behind as groundwater dried out.",why:"Direct small-scale evidence of the drying-groundwater history of the sulfate layer.",haz:"🔵 Assessment: loose small rocks underfoot.",s:["box"]},
+{id:"gale",name:"Gale Crater (approx. centre)",type:"lm",cls:"green",ll:[-5.4,137.8],elev:null,
+ info:"Gale crater, ~5.4°S, 137.8°E (published approximate location). Mount Sharp rises ~5 km above the crater floor.",why:"Orientation landmark.",haz:"—",s:["trek"]}];
+const T_={},ID=T.map(t=>(T_[t.id]=t).id);
+const LAYERS={
+ "Viking colour mosaic":["Mars_Viking_MDIM21_ClrMosaic_global_232m","jpg"],
+ "MOLA colour hillshade (elevation)":["Mars_MGS_MOLA_ClrShade_merge_global_463m","jpg"]};
+const R=3389.5,RAD_MGY_DAY=0.210,SOLH=24.66; // Mars mean radius km (IAU); RAD average GCR dose rate, Hassler 2014
+const TABS=[["nav","1 Surface Navigation"],["sci","2 Science Targets"],["ter","3 Terrain Intel"],["env","4 Environment"],["rte","5 EVA Planner"],["log","6 Field Log"]];
+// ===== STATE =====
+let S={tab:"nav",sel:"home",route:[],vis:[],log:[],smp:[],pos:{},elev:{},speed:1.5,stop:30,placing:null};
+try{Object.assign(S,JSON.parse(localStorage.getItem("ares")||"{}"));S.placing=null}catch(e){}
+const save=()=>{try{localStorage.setItem("ares",JSON.stringify(S))}catch(e){}};
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const BD={green:"🟢 REAL",yellow:"🟡 CALC",blue:"🔵 SIM"},bd=c=>`<span class="b ${c}">${BD[c]}</span>`;
+const P=id=>S.pos[id]||T_[id].ll,E=id=>S.elev[id]!=null?S.elev[id]:T_[id].elev;
+const fc=ll=>ll?`${Math.abs(ll[0]).toFixed(3)}°${ll[0]<0?"S":"N"}, ${ll[1].toFixed(3)}°E`:"not placed";
+const rad=x=>x*Math.PI/180;
+function hav(a,b){const dl=rad(b[0]-a[0]),dn=rad(b[1]-a[1]);const h=Math.sin(dl/2)**2+Math.cos(rad(a[0]))*Math.cos(rad(b[0]))*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(h))*1000}
+const src=ids=>ids.map(k=>`<a href="${SRC[k][1]}" target="_blank" rel="noopener">${SRC[k][0]}</a>`).join("<br>");
+const seq=()=>["home",...S.route];
+function legs(){const q=seq(),o=[];for(let i=1;i<q.length;i++){const a=q[i-1],b=q[i],pa=P(a),pb=P(b);if(!pa||!pb){o.push({a,b,miss:1});continue}
+ const d=hav(pa,pb),ea=E(a),eb=E(b);let sl=null;if(ea!=null&&eb!=null&&d>0)sl=Math.atan(Math.abs(eb-ea)/d)*180/Math.PI;o.push({a,b,d,dz:ea!=null&&eb!=null?eb-ea:null,sl})}return o}
+const diff=s=>s==null?["unknown","blue"]:s<10?["easy (<10°)","green"]:s<20?["moderate (10–20°)","yellow"]:["hard (>20°)","blue"];
+// ===== MAP =====
+const map=L.map("map",{crs:L.CRS.EPSG4326,center:[-5.1,137.6],zoom:7,minZoom:1,maxZoom:10});
+const base={};for(const k in LAYERS){const[p,x]=LAYERS[k];base[k]=L.tileLayer(`https://trek.nasa.gov/tiles/Mars/EQ/${p}/1.0.0/default/default028mm/{z}/{y}/{x}.${x}`,{zoomOffset:-1,minZoom:1,maxNativeZoom:8,maxZoom:10,attribution:"NASA/JPL Mars Trek"})}
+base["No basemap (offline grid)"]=L.layerGroup();Object.values(base)[0].addTo(map);L.control.layers(base,null,{collapsed:true}).addTo(map);
+L.control.scale({imperial:false}).addTo(map);
+const grat=L.layerGroup().addTo(map);for(let la=-10;la<=0;la++)grat.addLayer(L.polyline([[la,130],[la,145]],{color:"#ff9d1c",weight:.4,opacity:.35,interactive:false}));for(let lo=130;lo<=145;lo++)grat.addLayer(L.polyline([[-10,lo],[0,lo]],{color:"#ff9d1c",weight:.4,opacity:.35,interactive:false}));
+const mk=L.layerGroup().addTo(map);let rl=L.polyline([],{color:"#ff9d1c",weight:3,dashArray:"8 6"}).addTo(map);
+map.on("mousemove",e=>$("#co").textContent=fc([e.latlng.lat,e.latlng.lng]));
+map.on("click",e=>{if(!S.placing)return;S.pos[S.placing]=[+e.latlng.lat.toFixed(4),+e.latlng.lng.toFixed(4)];S.sel=S.placing;S.placing=null;$("#map").classList.remove("pl");save();draw()});
+function drawMap(){mk.clearLayers();T.forEach(t=>{const p=P(t.id);if(!p)return;
+ const m=L.marker(p,{draggable:t.type!=="base",icon:L.divIcon({className:"",iconSize:[16,16],html:`<div class="pin ${S.vis.includes(t.id)?"v":""} ${S.sel===t.id?"sel":""}"></div>`})}).bindTooltip(t.name);
+ m.on("click",()=>{S.sel=t.id;save();draw()});m.on("dragend",e=>{const l=e.target.getLatLng();S.pos[t.id]=[+l.lat.toFixed(4),+l.lng.toFixed(4)];save();draw()});mk.addLayer(m)});
+ S.smp.forEach(s=>mk.addLayer(L.marker(s.ll,{icon:L.divIcon({className:"",iconSize:[14,14],html:'<div class="pin s"></div>'})}).bindTooltip("Hypothetical sample: "+esc(s.note))));
+ rl.setLatLngs(seq().map(P).filter(Boolean))}
+// ===== PANELS =====
+function side(){const c=$("#sc");let h="";
+ if(S.tab==="nav")h=`<h3>Surface Navigation</h3><p class="m">Use the layer button (top-right of map) to switch maps. Orange grid = 1° graticule (🟡 drawn by us). Hover the map for coordinates (east-positive longitude).</p>
+ <h3>Landmarks & destinations</h3>${T.map(t=>`<div class="item ${S.sel===t.id?"sel":""}" onclick="pick('${t.id}',1)"><b>${t.name}</b> ${bd(t.cls)}<br><span class="m">${fc(P(t.id))}</span></div>`).join("")}
+ <p class="m">Basemaps: ${src(["trek"])}. If tiles do not load, the grid still works (see README notes in the chat).</p>`;
+ if(S.tab==="sci")h=`<h3>Science Targets</h3>${T.filter(t=>t.type==="sci").map(t=>`<div class="item ${S.sel===t.id?"sel":""}" onclick="pick('${t.id}')">${S.vis.includes(t.id)?"✅":"⬜"} <b>${t.name}</b><br><span class="m">${P(t.id)?fc(P(t.id)):"📍 needs placing"} · ${S.route.includes(t.id)?"in route":""}</span></div>`).join("")}<p class="m">Targets with no published coordinates are pinned by the astronaut on the map (🟡 map-derived position).</p>`;
+ if(S.tab==="ter"){const t=T_[S.sel];h=`<h3>Terrain Intelligence</h3><p><b>${t.name}</b></p><p>Elevation: ${E(S.sel)!=null?E(S.sel).toFixed(0)+" m "+(S.elev[S.sel]!=null?bd("yellow")+" user-entered":bd("green")):"not set"}</p>
+ <p class="m">Enter an elevation read from Mars Trek (MOLA) for this point:</p><input id="ei" type="number" placeholder="metres" value="${S.elev[S.sel]??""}"> <button onclick="setE()">Set</button>
+ <h3>Route legs</h3>${legTbl()}<h3>Known terrain characteristics</h3><p>${t.haz}</p><p class="m">MOLA data is ~463 m/pixel: slopes are regional averages and can hide steep local features. Straight-line legs are not planned paths. Slope classes (10°/20°) are our own 🔵 assumptions, not NASA limits.</p>`}
+ if(S.tab==="env")h=`<h3>Environmental Conditions</h3>
+ <div class="item">${bd("green")} <b>Radiation (historical)</b><br>Average GCR dose at Gale over ~300 sols (2012–13): <b>0.210 ± 0.040 mGy/day</b>; daily range 180–225 µGy/day. Dose rises when atmospheric pressure falls.<br>${src(["rad"])}</div>
+ <div class="item">${bd("green")} <b>Atmosphere (historical)</b><br>REMS found Gale very dry with larger daily pressure swings than any previous lander. Curiosity climbed from −4501 m to −3765 m by sol 3967.<br>${src(["rems"])}</div>
+ <div class="item">${bd("yellow")} <b>EVA dose estimate</b><br>Dose = 0.210 mGy/day × EVA hours ÷ 24.66 h (one sol). Computed in Route planner. Ignores solar events, terrain shielding and suit shielding.</div>
+ <div class="item">${bd("blue")} <b>Not available</b><br>No live Mars weather and no real-time telemetry are used. Temperature values: copy from the REMS paper tables before presenting.</div>`;
+ if(S.tab==="rte"){const L_=legs(),ok=L_.filter(l=>!l.miss),km=ok.reduce((s,l)=>s+l.d,0)/1000,wh=km/S.speed,sh=S.route.length*S.stop/60,tot=wh+sh,dose=RAD_MGY_DAY*tot/SOLH*1000;
+ h=`<h3>EVA Route Planner</h3><p class="m">Start: Bradbury Landing. Add stops from the Science Targets panel or target details.</p>
+ <ol>${S.route.map((id,i)=>`<li>${T_[id].name} <button onclick="mv(${i},-1)">↑</button><button onclick="mv(${i},1)">↓</button><button onclick="rm(${i})">✕</button></li>`).join("")||"<li class='m'>empty</li>"}</ol>${legTbl()}
+ <h3>Totals</h3><p>${bd("yellow")} Straight-line distance: <b>${km.toFixed(2)} km</b><br>Method: haversine on a sphere, R = 3389.5 km.</p>
+ <p>${bd("blue")} Assumptions — walking speed <input type="number" step=".1" id="sp" value="${S.speed}" onchange="S.speed=+this.value||1.5;save();draw()"> km/h, <input type="number" id="stp" value="${S.stop}" onchange="S.stop=+this.value||0;save();draw()"> min per science stop</p>
+ <p>${bd("blue")} Est. EVA time: <b>${tot.toFixed(1)} h</b> (walk ${wh.toFixed(1)} + stops ${sh.toFixed(1)})<br>${bd("yellow")} Est. radiation dose: <b>${dose.toFixed(1)} µGy</b> (historical average rate)</p>
+ <button onclick="S.route=[];save();draw()">Clear route</button>`}
+ if(S.tab==="log")h=`<h3>Astronaut Field Log</h3><p class="m">Notes are about: <b>${T_[S.sel].name}</b></p><textarea id="ln" rows="3" placeholder="Observation…"></textarea><br><button class="pri" onclick="addLog()">Save note</button> <button onclick="addSmp()">Log hypothetical sample here</button>
+ <h3>Objectives</h3>${objs().map(o=>`<div>${o[1]?"✅":"⬜"} ${o[0]}</div>`).join("")}<h3>Entries ${bd("blue")}</h3>${S.log.slice().reverse().map(l=>`<div class="item" style="cursor:default"><span class="m">${l.t} · ${esc(l.n)}</span><br>${esc(l.x)}</div>`).join("")||"<span class='m'>none yet</span>"}<button onclick="dl()">Export log (.txt)</button>`;
+ c.innerHTML=h}
+function legTbl(){const L_=legs();if(!L_.length)return"";return`<table><tr><th>Leg</th><th>km</th><th>Δh</th><th>Slope</th></tr>${L_.map(l=>{if(l.miss)return`<tr><td>${T_[l.a].name.split(" ")[0]}→${T_[l.b].name.split(" ")[0]}</td><td colspan=3 class="m">place both points</td></tr>`;const d=diff(l.sl);return`<tr><td>${T_[l.a].name.split(" ")[0]}→${T_[l.b].name.split(" ")[0]}</td><td>${(l.d/1000).toFixed(2)}</td><td>${l.dz!=null?l.dz.toFixed(0)+" m":"–"}</td><td class="${d[1]}">${l.sl!=null?l.sl.toFixed(1)+"° ":""}${d[0]}</td></tr>`}).join("")}</table>`}
+function detail(){const t=T_[S.sel],p=P(t.id);$("#detail").innerHTML=`<h3>Selected target</h3><h2 style="margin:0">${t.name}</h2><p>${bd(t.cls)} ${t.type==="sci"?"info from NASA/published sources":""}</p>
+ <p><b>Position:</b> ${fc(p)} ${p&&S.pos[t.id]?bd("yellow"):p?bd("green"):""}<br><b>Elevation:</b> ${E(t.id)!=null?E(t.id).toFixed(0)+" m":"not set"}</p>
+ <p>${t.info}</p><h3>Why it matters</h3><p>${t.why}</p><h3>Potential obstacles</h3><p>${t.haz}</p><h3>Sources</h3><p>${src(t.s)}</p>
+ ${t.type!=="base"&&t.type!=="lm"?`<button class="pri" onclick="place()">📍 ${p?"Re-place":"Place"} on map</button> `:""}
+ ${p&&t.type==="sci"?`<button onclick="addR()">➕ Add to EVA route</button> <button onclick="vis()">${S.vis.includes(t.id)?"↩ Unmark":"✔ Mark visited"}</button>`:""}
+ <p class="m">Drag a marker to adjust its position. Pinned positions are ${bd("yellow")} user-placed, not NASA coordinates — verify against NASA imagery.</p>`}
+function objs(){return[["Plan a route with ≥3 science stops",S.route.length>=3],["Visit a boxwork ridge target",S.vis.includes("ridge")],["Visit a hollow target",S.vis.includes("hollow")],["Log ≥1 hypothetical sample",S.smp.length>0],["Record ≥1 field note",S.log.length>0]]}
+function status(){const o=objs(),n=o.filter(x=>x[1]).length,sci=T.filter(t=>t.type==="sci");$("#st").innerHTML=`<span>MISSION: SIMULATED ${bd("blue")}</span><span>Targets visited ${S.vis.length}/${sci.length}</span><span>Route stops ${S.route.length}</span><span>Samples ${S.smp.length}</span><span>Objectives ${n}/${o.length}</span><div class="bar"><i style="width:${n/o.length*100}%"></i></div>`}
+function nav(){$("#nav").innerHTML=TABS.map(t=>`<button class="${S.tab===t[0]?"on":""}" onclick="S.tab='${t[0]}';save();draw()">${t[1]}</button>`).join("")}
+function draw(){nav();side();detail();drawMap();status()}
+// ===== ACTIONS =====
+function pick(id,fly){S.sel=id;save();draw();const p=P(id);if(fly&&p)map.setView(p,Math.max(map.getZoom(),7))}
+function place(){S.placing=S.sel;$("#map").classList.add("pl");alert("Tap/click the map to place: "+T_[S.sel].name)}
+function addR(){if(!S.route.includes(S.sel))S.route.push(S.sel);S.tab="rte";save();draw()}
+function mv(i,d){const j=i+d;if(j<0||j>=S.route.length)return;[S.route[i],S.route[j]]=[S.route[j],S.route[i]];save();draw()}
+function rm(i){S.route.splice(i,1);save();draw()}
+function vis(){const i=S.vis.indexOf(S.sel);i<0?S.vis.push(S.sel):S.vis.splice(i,1);save();draw()}
+function setE(){const v=parseFloat($("#ei").value);if(isNaN(v))delete S.elev[S.sel];else S.elev[S.sel]=v;save();draw()}
+const now=()=>new Date().toISOString().slice(0,16).replace("T"," ")+" UTC";
+function addLog(){const x=$("#ln").value.trim();if(!x)return;S.log.push({t:now(),n:T_[S.sel].name,x});save();draw()}
+function addSmp(){const p=P(S.sel);if(!p){alert("Place this target on the map first.");return}S.smp.push({ll:p,note:T_[S.sel].name});S.log.push({t:now(),n:T_[S.sel].name,x:"Hypothetical sample location recorded at "+fc(p)});save();draw()}
+function dl(){const s="ARES FIELD LOG (simulated mission)\n"+S.log.map(l=>`${l.t} | ${l.n} | ${l.x}`).join("\n");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([s],{type:"text/plain"}));a.download="ares-log.txt";a.click()}
+draw();
+</script></body></html>
