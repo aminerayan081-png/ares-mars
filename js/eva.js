@@ -44,8 +44,22 @@ function routeTotals(){
 }
 function addToRoute(){if(!S.route.includes(S.sel))S.route.push(S.sel);S.tab="rte";save();render()}
 function moveStop(i,d){const j=i+d;if(j<0||j>=S.route.length)return;[S.route[i],S.route[j]]=[S.route[j],S.route[i]];save();render()}
-function removeStop(i){S.route.splice(i,1);save();render()}
-function clearRoute(){S.route=[];save();render()}
+function removeStop(i){const id=S.route[i];S.route.splice(i,1);dropWp(id);save();render()}
+function clearRoute(){S.route.filter(isWp).forEach(dropWp);S.route=[];save();render()}
+function dropWp(id){if(isWp(id)){delete S.wp[id];delete S.pos[id];delete S.elev[id]}}
+function addWaypoint(ll){
+  const id="wp-"+S.nextWp++;
+  S.wp[id]={name:"WP"+id.slice(3)};
+  S.pos[id]=[+ll[0].toFixed(4),+ll[1].toFixed(4)];
+  S.route.push(id);S.tab="rte";
+  if(isMobile()&&S.sheet==="closed")S.sheet="half";
+  save();render();
+}
+function renameStop(i,v){
+  const id=S.route[i];if(!isWp(id))return;
+  S.wp[id].name=String(v).trim().slice(0,60)||"WP"+id.slice(3);
+  save();render();
+}
 function setSpeed(v){const n=parseFloat(v);S.speed=n>0?n:1.5;save();render()}
 function setStop(v){const n=parseFloat(v);S.stop=Number.isFinite(n)&&n>=0?n:30;save();render()}
 function setElev(){const v=parseFloat($("#ei").value);if(Number.isNaN(v))delete S.elev[S.sel];else S.elev[S.sel]=v;save();render()}
