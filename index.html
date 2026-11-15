@@ -12,13 +12,18 @@
 <body>
 <header>
   <h1>ARES</h1>
+  <span class="sim">SIMULATED MISSION</span>
   <small>Autonomous Reconnaissance &amp; Exploration System · Lower Mount Sharp, Gale Crater · SIMULATED MISSION — no live telemetry or live Mars weather</small>
   <span><span class="b green">🟢 REAL DATA</span> <span class="b yellow">🟡 CALCULATION</span> <span class="b blue">🔵 SIMULATION</span></span>
 </header>
-<section id="side"><nav id="nav"></nav><div id="sc"><p class="m">Loading…</p></div></section>
 <div id="mapw"><div id="map"></div><div id="co">—</div><div id="banner" hidden></div></div>
-<aside id="detail"></aside>
+<div id="sheet">
+  <div id="grab"><button onclick="toggleSheet()" aria-label="Expand or shrink panel">⇕ <span id="gt"></span></button><button onclick="closeSheet()" aria-label="Close panel">✕</button></div>
+  <section id="side"><div id="sc"><p class="m">Loading…</p></div></section>
+  <aside id="detail"></aside>
+</div>
 <footer id="st"></footer>
+<nav id="nav"></nav>
 <noscript>ARES needs JavaScript.</noscript>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script src="js/state.js"></script>
