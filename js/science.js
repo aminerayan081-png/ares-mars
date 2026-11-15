@@ -39,7 +39,9 @@ async function loadScience(){
 function panelScience(){
   if(!SCI.loaded)return'<h3>Science Targets</h3><p class="m">Loading science data…</p>';
   if(SCI.failed)return`<p><span class="b warn">⚠</span> ${esc(SCI.failed)} Showing the basic target list instead.</p>`+panelSci();
-  return SCIUI.open?sciDetail(SCIUI.open):sciList();
+  const nav=typeof sciNav==="function"?sciNav():"";
+  if(SCIUI.view==="images"&&typeof labList==="function")return nav+labList();
+  return nav+(SCIUI.open?sciDetail(SCIUI.open):sciList());
 }
 
 function sciFiltered(){
