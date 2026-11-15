@@ -1,0 +1,12 @@
+:root{--bg:#07080a;--p:#101216;--l:#262a31;--t:#e6e1d8;--m:#8a8f98;--a:#ff9d1c;--g:#3ddc84;--y:#ffd23f;--b:#4aa3ff}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--t);font:14px/1.45 system-ui,sans-serif}
+h3{margin:12px 0 4px;color:var(--a);font-size:13px;letter-spacing:1px;text-transform:uppercase}
+a{color:var(--a)}
+.m{color:var(--m);font-size:12px}
+button,input,textarea,select{font:inherit;color:var(--t);background:#181b21;border:1px solid var(--l);border-radius:4px;padding:6px 8px}
+button{cursor:pointer}
+button:hover,button.on{border-color:var(--a);color:var(--a)}
+button.pri{background:var(--a);color:#000;border-color:var(--a)}
+textarea{width:100%}
+input[type=number]{width:80px}
