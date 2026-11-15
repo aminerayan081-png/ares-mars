@@ -10,6 +10,7 @@ function fatal(msg){
   try{await loadData()}catch(e){fatal("Data problem: "+e.message);return}
   try{
     loadState();cleanState(T.map(t=>t.id));
-    initMap();render();
+        initMap();render();
+    if(typeof loadScience==="function")loadScience();
   }catch(e){fatal("Start-up error: "+e.message)}
 })();
