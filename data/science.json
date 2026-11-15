@@ -1,0 +1,220 @@
+{
+  "note": "ARES Phase 3 science records. kind 'observation' = reported as seen or measured by Curiosity; 'published-interpretation' = explanation proposed by scientists in the cited source, not confirmed fact. The 'criteria' fields are ARES planning labels used by the prioritization method (documented in Stage 3.6); they are not NASA rankings. No target here has verified coordinates.",
+  "categories": {
+    "boxwork": "Boxwork formations",
+    "layered-terrain": "Layered terrain",
+    "mineral-features": "Nodules and mineral features",
+    "surrounding-terrain": "Surrounding terrain"
+  },
+  "targets": [
+    {
+      "id": "sci-ridge",
+      "mapId": "ridge",
+      "name": "Boxwork ridges",
+      "category": "boxwork",
+      "short": "Low, crisscrossing ridges that Curiosity first examined up close in 2025.",
+      "relevance": "Direct focus of the ARES mission question about past groundwater.",
+      "facts": [
+        { "kind": "observation", "text": "Low ridges form crisscrossing patterns that stretch for miles across one layer of Mount Sharp.", "sources": ["jpl-boxwork-2025", "jpl-boxwork"] },
+        { "kind": "observation", "text": "Boxwork patterns have not been spotted elsewhere on the mountain by Curiosity or by orbiters.", "sources": ["jpl-boxwork-2025"] },
+        { "kind": "observation", "text": "Dark lines seen from orbit along the ridges were found, up close, to be fractures.", "sources": ["jpl-boxwork"] },
+        { "kind": "observation", "text": "A drilled ridge sample contained clay minerals.", "sources": ["jpl-boxwork"] },
+        { "kind": "published-interpretation", "text": "Scientists propose that groundwater flowed through fractures and left minerals that hardened the rock, and that wind later removed the softer rock around it.", "sources": ["jpl-boxwork", "pia26693"] }
+      ],
+      "coordStatus": "unplaced",
+      "lat": null,
+      "lon": null,
+      "coordSystem": null,
+      "observedNote": "Close-up views from 15 to 18 May 2025 (JPL, 2025). Panorama PIA26693 taken 26 Sept 2025.",
+      "mission": "Mars Science Laboratory (Curiosity)",
+      "instrument": "Mastcam; drill sample analysis instruments",
+      "imageIds": ["pia26693"],
+      "sourceIds": ["jpl-boxwork", "jpl-boxwork-2025", "pia26693"],
+      "evidence": "green",
+      "limits": [
+        "No published map coordinates in the sources ARES has checked.",
+        "Ridge height differs between sources: some just a few inches (JPL, June 2025) versus roughly 1 to 2 m (NASA, Feb 2026).",
+        "Sources are NASA news articles and image pages, not peer-reviewed papers.",
+        "Ridges are not shown to be walkable or safe for an astronaut."
+      ],
+      "status": "Observed by Curiosity",
+      "criteria": { "boxworkRelevance": "direct", "observation": "direct-closeup", "identification": "stated" }
+    },
+    {
+      "id": "sci-hollow",
+      "mapId": "hollow",
+      "name": "Sandy hollows between ridges",
+      "category": "boxwork",
+      "short": "Sandy low ground between ridges, with bedrock that differs from other Mount Sharp layers.",
+      "relevance": "Comparing hollow rock with ridge rock helps test how groundwater shaped each.",
+      "facts": [
+        { "kind": "observation", "text": "A drilled bedrock sample from a hollow contained carbonate minerals.", "sources": ["jpl-boxwork"] },
+        { "kind": "observation", "text": "Bedrock between ridges has a different composition from other layers of Mount Sharp.", "sources": ["jpl-boxwork-2025"] },
+        { "kind": "observation", "text": "Rover engineers noted wheel slipping and turning trouble in the sand of the hollows.", "sources": ["jpl-boxwork"] }
+      ],
+      "coordStatus": "unplaced",
+      "lat": null,
+      "lon": null,
+      "coordSystem": null,
+      "observedNote": "Sampling reported in NASA's Feb 2026 article; exact sample date not given in the sources checked.",
+      "mission": "Mars Science Laboratory (Curiosity)",
+      "instrument": "Mastcam; drill sample analysis instruments",
+      "imageIds": ["pia26693"],
+      "sourceIds": ["jpl-boxwork", "jpl-boxwork-2025", "pia26693"],
+      "evidence": "green",
+      "limits": [
+        "No published map coordinates in the sources ARES has checked.",
+        "The wheel-slip remark is a rover observation and does not establish anything about an astronaut on foot.",
+        "The sources do not name the hollow drill site."
+      ],
+      "status": "Observed by Curiosity",
+      "criteria": { "boxworkRelevance": "direct", "observation": "direct-closeup", "identification": "stated" }
+    },
+    {
+      "id": "sci-nodule",
+      "mapId": "nodule",
+      "name": "Nodule field",
+      "category": "mineral-features",
+      "short": "Pea-sized bumps found on ridge walls and in hollows, imaged close-up on 21 Aug 2025.",
+      "relevance": "Nodules record minerals left as groundwater dried out, linking the boxwork to water history.",
+      "facts": [
+        { "kind": "observation", "text": "Nodules were found along ridge walls and in the hollows between ridges, not near the central fractures.", "sources": ["jpl-boxwork", "pia26697"] },
+        { "kind": "observation", "text": "The mosaic PIA26697 was taken with MAHLI on 21 Aug 2025 (sol 4636).", "sources": ["pia26697"] },
+        { "kind": "published-interpretation", "text": "NASA says nodules like these were made by minerals left behind as water dried billions of years ago.", "sources": ["pia26697"] },
+        { "kind": "published-interpretation", "text": "A mission scientist says the team cannot yet explain why the nodules sit where they do.", "sources": ["jpl-boxwork"] }
+      ],
+      "coordStatus": "unplaced",
+      "lat": null,
+      "lon": null,
+      "coordSystem": null,
+      "observedNote": "21 Aug 2025 (sol 4636).",
+      "mission": "Mars Science Laboratory (Curiosity)",
+      "instrument": "MAHLI",
+      "imageIds": ["pia26697"],
+      "sourceIds": ["pia26697", "jpl-boxwork"],
+      "evidence": "green",
+      "limits": [
+        "NASA does not state where on the map the image was taken.",
+        "Why the nodules are located where they are remains an open question."
+      ],
+      "status": "Observed by Curiosity",
+      "criteria": { "boxworkRelevance": "direct", "observation": "direct-closeup", "identification": "stated" }
+    },
+    {
+      "id": "sci-vein",
+      "mapId": null,
+      "name": "Calcium sulfate veins",
+      "category": "mineral-features",
+      "short": "White mineral-filled fractures in the bedrock between boxwork ridges.",
+      "relevance": "Veins are left by groundwater moving through rock cracks, directly tied to the mission question.",
+      "facts": [
+        { "kind": "observation", "text": "The bedrock between ridges has many tiny fractures filled with white calcium sulfate veins.", "sources": ["jpl-boxwork-2025"] },
+        { "kind": "observation", "text": "Similar veins were common in lower layers of Mount Sharp but had not been seen in the sulfate layer until this region.", "sources": ["jpl-boxwork-2025"] },
+        { "kind": "observation", "text": "NASA identifies the wavy ridges between nodule groups in PIA26697 as calcium sulfate veins.", "sources": ["pia26697"] },
+        { "kind": "published-interpretation", "text": "The veins were left behind as groundwater trickled through rock cracks.", "sources": ["jpl-boxwork-2025"] }
+      ],
+      "coordStatus": "unplaced",
+      "lat": null,
+      "lon": null,
+      "coordSystem": null,
+      "observedNote": "Reported June 2025 (JPL); also visible in PIA26697 (21 Aug 2025).",
+      "mission": "Mars Science Laboratory (Curiosity)",
+      "instrument": "Not specified in the sources checked",
+      "imageIds": ["pia26697"],
+      "sourceIds": ["jpl-boxwork-2025", "pia26697"],
+      "evidence": "green",
+      "limits": [
+        "No published map coordinates in the sources ARES has checked.",
+        "The team has not yet explained why the veins returned in this layer (JPL, June 2025)."
+      ],
+      "status": "Observed by Curiosity",
+      "criteria": { "boxworkRelevance": "direct", "observation": "direct-closeup", "identification": "stated" }
+    },
+    {
+      "id": "sci-sulfate-unit",
+      "mapId": null,
+      "name": "Sulfate-bearing layer of Mount Sharp",
+      "category": "layered-terrain",
+      "short": "The salty-mineral layer of Mount Sharp that contains the boxwork region.",
+      "relevance": "Gives the geological setting: the boxwork formed in a layer that records drying climate.",
+      "facts": [
+        { "kind": "observation", "text": "The layer Curiosity was exploring is rich in magnesium sulfates, salty minerals that form as water dries up.", "sources": ["jpl-boxwork-2025"] },
+        { "kind": "observation", "text": "The whole boxwork region is part of a layer on Mount Sharp enriched in sulfates.", "sources": ["jpl-boxwork"] },
+        { "kind": "published-interpretation", "text": "Sulfates in this layer suggest it formed as the climate became drier, yet boxwork shows water still existed underground.", "sources": ["jpl-boxwork-2025"] }
+      ],
+      "coordStatus": "unplaced",
+      "lat": null,
+      "lon": null,
+      "coordSystem": null,
+      "observedNote": "Not tied to a single observation date.",
+      "mission": "Mars Science Laboratory (Curiosity)",
+      "instrument": "Not specified in the sources checked",
+      "imageIds": ["pia26552"],
+      "sourceIds": ["jpl-boxwork-2025", "jpl-boxwork", "pia26552"],
+      "evidence": "green",
+      "limits": [
+        "A layer covers a large area and has no single coordinate; ARES does not give it a point marker.",
+        "Layer boundaries are not defined in the sources ARES has checked."
+      ],
+      "status": "Described by NASA",
+      "criteria": { "boxworkRelevance": "related", "observation": "direct-distant", "identification": "stated" }
+    },
+    {
+      "id": "sci-gould-mesa",
+      "mapId": null,
+      "name": "Gould Mesa (butte)",
+      "category": "surrounding-terrain",
+      "short": "A distant butte whose cliff band and dark ridges may be early signs of boxwork.",
+      "relevance": "A possible nearby comparison area for boxwork-related terrain.",
+      "facts": [
+        { "kind": "observation", "text": "Curiosity's Mastcam imaged the butte nicknamed Gould Mesa on 9 March 2025 (sol 4476).", "sources": ["pia26552"] },
+        { "kind": "published-interpretation", "text": "A band of cliffs and dark ridges near the top of the butte may be the first glimpses of boxwork formations.", "sources": ["pia26552"] }
+      ],
+      "coordStatus": "unplaced",
+      "lat": null,
+      "lon": null,
+      "coordSystem": null,
+      "observedNote": "9 March 2025 (sol 4476).",
+      "mission": "Mars Science Laboratory (Curiosity)",
+      "instrument": "Mastcam",
+      "imageIds": ["pia26552"],
+      "sourceIds": ["pia26552"],
+      "evidence": "green",
+      "limits": [
+        "NASA says the features 'may be' boxwork; this is not a confirmed identification.",
+        "Distance and location of the butte are not given in the source.",
+        "'Gould Mesa' is a mission nickname, not an official IAU name."
+      ],
+      "status": "Distant view only",
+      "criteria": { "boxworkRelevance": "related", "observation": "direct-distant", "identification": "proposed" }
+    },
+    {
+      "id": "sci-altadena",
+      "mapId": null,
+      "name": "Altadena drill sample",
+      "category": "mineral-features",
+      "short": "A rock nicknamed Altadena, drilled on 8 June 2025 to study the bedrock's composition.",
+      "relevance": "A sample from the new region could help explain the bedrock's different composition.",
+      "facts": [
+        { "kind": "observation", "text": "Curiosity drilled a rock nicknamed Altadena on 8 June 2025 and dropped the powder into instruments for analysis.", "sources": ["jpl-boxwork-2025"] }
+      ],
+      "coordStatus": "unplaced",
+      "lat": null,
+      "lon": null,
+      "coordSystem": null,
+      "observedNote": "8 June 2025.",
+      "mission": "Mars Science Laboratory (Curiosity)",
+      "instrument": "Drill and onboard analysis instruments",
+      "imageIds": [],
+      "sourceIds": ["jpl-boxwork-2025"],
+      "evidence": "green",
+      "limits": [
+        "The sources ARES has checked do not report Altadena's analysis results.",
+        "The sources do not say whether Altadena is the ridgetop, hollow or transitional sample.",
+        "No associated image has been verified."
+      ],
+      "status": "Sampled; results not checked by ARES",
+      "criteria": { "boxworkRelevance": "related", "observation": "none", "identification": "stated" }
+    }
+  ]
+}
